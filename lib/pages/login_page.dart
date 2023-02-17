@@ -17,44 +17,57 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Login'),
-      ),
-      body: SafeArea(
-          minimum: const EdgeInsets.all(16),
-          child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-            builder: (context, state) {
-              final authBloc = BlocProvider.of<AuthenticationBloc>(context);
-              if (state is AuthenticationNotAuthenticated) {
-                return _AuthForm();
-              }
-              if (state is AuthenticationFailure ||
-                  state is SessionExpiredState) {
-                var msg = (state as AuthenticationFailure).message;
-                return Center(
-                    child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Text(msg),
-                    TextButton(
-                      //textColor: Theme.of(context).primaryColor,
-                      child: Text('Retry'),
-                      onPressed: () {
-                        authBloc.add(AppLoaded());
-                      },
-                    )
-                  ],
-                ));
-              }
-              // return splash screen
-              return Center(
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
+      body: Stack(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+
+                /*image: DecorationImage(
+                  image: NetworkImage(
+                      'https://w0.peakpx.com/wallpaper/635/286/HD-wallpaper-football-lovers-abo-trika-cadillacs-mbappe-messi-ramos-ronaldo-salah-totti.jpg'),
+                  fit: BoxFit.cover,
+                  repeat: ImageRepeat.noRepeat),*/
                 ),
-              );
-            },
-          )),
+          ),
+          SafeArea(
+            minimum: const EdgeInsets.all(16),
+            child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+              builder: (context, state) {
+                final authBloc = BlocProvider.of<AuthenticationBloc>(context);
+                if (state is AuthenticationNotAuthenticated) {
+                  return _AuthForm();
+                }
+                if (state is AuthenticationFailure ||
+                    state is SessionExpiredState) {
+                  var msg = (state as AuthenticationFailure).message;
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Text(msg),
+                        TextButton(
+                          //textColor: Theme.of(context).primaryColor,
+                          child: Text('Retry'),
+                          onPressed: () {
+                            authBloc.add(AppLoaded());
+                          },
+                        )
+                      ],
+                    ),
+                  );
+                }
+                // return splash screen
+                return Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -79,6 +92,11 @@ class _AuthForm extends StatelessWidget {
 class _SignInForm extends StatefulWidget {
   @override
   __SignInFormState createState() => __SignInFormState();
+}
+
+class _RegisterInForm extends StatefulWidget {
+  @override
+  __RegisterInFormState createState() => __RegisterInFormState();
 }
 
 class __SignInFormState extends State<_SignInForm> {
@@ -126,6 +144,29 @@ class __SignInFormState extends State<_SignInForm> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(),
+                        child: Image.network(
+                          'https://img.freepik.com/vector-premium/balon-futbol-estilo-dibujos-animados-aislado-fondo-blanco-balon-futbol-icono-deporte-juegos_566734-174.jpg',
+                          width: 200,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 60),
+                        child: Text(
+                          'PLAYFUTDAY',
+                          style: TextStyle(
+                              fontSize: 25,
+                              fontStyle: FontStyle.italic,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
+                        ),
+                      )
+                    ],
+                  ),
                   TextFormField(
                     decoration: InputDecoration(
                       labelText: 'User Name',
@@ -164,17 +205,26 @@ class __SignInFormState extends State<_SignInForm> {
                   const SizedBox(
                     height: 16,
                   ),
-                  //RaisedButton(
-                  ElevatedButton(
-                    //color: Theme.of(context).primaryColor,
-                    //textColor: Colors.white,
-                    //padding: const EdgeInsets.all(16),
-                    //shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(8.0)),
-                    // ignore: sort_child_properties_last
-                    child: Text('LOG IN'),
-                    onPressed:
-                        state is LoginLoading ? () {} : _onLoginButtonPressed,
-                  )
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: ElevatedButton(
+                      child: Text('REGISTER'),
+                      onPressed: () => {},
+                    ),
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: ElevatedButton(
+                        //color: Theme.of(context).primaryColor,
+                        //textColor: Colors.white,
+                        //padding: const EdgeInsets.all(16),
+                        //shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(8.0)),
+                        // ignore: sort_child_properties_last
+                        child: Text('LOG IN'),
+                        onPressed: state is LoginLoading
+                            ? () {}
+                            : _onLoginButtonPressed,
+                      )),
                 ],
               ),
             ),
@@ -186,5 +236,13 @@ class __SignInFormState extends State<_SignInForm> {
 
   void _showError(String error) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
+  }
+}
+
+class __RegisterInFormState extends State<_RegisterInForm> {
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    throw UnimplementedError();
   }
 }

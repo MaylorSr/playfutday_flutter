@@ -5,7 +5,6 @@ import 'package:injectable/injectable.dart';
 import 'package:playfutday_flutter/models/user.dart';
 
 import '../config/locator.dart';
-import '../models/login.dart';
 import '../repositories/authentication_repository.dart';
 import '../repositories/user_repository.dart';
 import 'localstorage_service.dart';
@@ -38,8 +37,11 @@ class JwtAuthenticationService extends AuthenticationService {
     print("get current user");
     String? token = _localStorageService.getFromDisk("user_token");
     if (token != null) {
-      LoginResponse response = await _userRepository.me();
-      return User(avatar: response.avatar, fullName: response.fullName, id: response.id);
+      User response = await _userRepository.me();
+      return User(
+          avatar: response.avatar,
+          username: response.username,
+          id: response.id);
     }
     return null;
   }
@@ -47,10 +49,12 @@ class JwtAuthenticationService extends AuthenticationService {
   @override
   Future<User> signInWithUserNameAndPassword(
       String username, String password) async {
-    LoginResponse response =
-        await _authenticationRepository.doLogin(username, password);
+    User response = await _authenticationRepository.doLogin(username, password);
     await _localStorageService.saveToDisk('user_token', response.token);
-    return User(avatar: response.avatar, username: response.username, fullName: response.fullName);
+    return User(
+      avatar: response.avatar,
+      username: response.username,
+    );
   }
 
   @override

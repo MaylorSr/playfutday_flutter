@@ -24,7 +24,7 @@ class HomePage extends StatelessWidget {
           child: Column(
             children: <Widget>[
               Text(
-                'Welcome, ${user.fullName}',
+                'Welcome, ${user.username}',
                 style: TextStyle(fontSize: 24),
               ),
               const SizedBox(

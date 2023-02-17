@@ -30,6 +30,7 @@ import 'dart:convert';
 
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
+import 'package:playfutday_flutter/models/models.dart';
 
 import 'package:playfutday_flutter/rest/rest.dart';
 
@@ -50,6 +51,6 @@ class AuthenticationRepository {
 
     var jsonResponse = await _client.post(
         url, LoginRequest(username: username, password: password));
-    return LoginResponse.fromJson(jsonDecode(jsonResponse));
+    return User.fromJson(jsonDecode(jsonResponse));
   }
 }

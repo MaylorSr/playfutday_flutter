@@ -1,4 +1,4 @@
-class LoginResponse {
+/*class LoginResponse {
   String? id;
   String? username;
   String? fullName;
@@ -36,9 +36,8 @@ class LoginResponse {
     data['refreshToken'] = refreshToken;
     return data;
   }
-  
 }
-
+*/
 
 class LoginRequest {
   String? username;
