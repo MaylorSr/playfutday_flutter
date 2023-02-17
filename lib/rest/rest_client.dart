@@ -95,11 +95,12 @@ class RestClient {
 
         // Así devolvemos un mensaje "genérico"
         throw AuthenticationException(
-            "You have entered an invalid username or password");
+            jsonDecode(utf8.decode(response.bodyBytes))['message']);
       case 403:
         throw UnauthorizedException(utf8.decode(response.bodyBytes));
       case 404:
-        throw NotFoundException(utf8.decode(response.bodyBytes));
+        throw NotFoundException(
+            jsonDecode(utf8.decode(response.bodyBytes))['message']);
       case 500:
       default:
         throw FetchDataException(

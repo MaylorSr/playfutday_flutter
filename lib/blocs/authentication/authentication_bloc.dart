@@ -25,7 +25,7 @@ class AuthenticationBloc
   ) async {
     emit(AuthenticationLoading());
     try {
-      await Future.delayed(Duration(milliseconds: 500)); // a simulated delay
+      await Future.delayed(Duration(milliseconds: 700)); // a simulated delay
       final currentUser = await _authenticationService.getCurrentUser();
 
       if (currentUser != null) {
@@ -36,6 +36,7 @@ class AuthenticationBloc
     } on UnauthorizedException catch (e) {
       print(e);
       emit(AuthenticationNotAuthenticated());
+      return;
     } on Exception catch (e) {
       emit(AuthenticationFailure(
           message: 'An unknown error occurred: ${e.toString()}'));

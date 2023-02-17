@@ -176,12 +176,6 @@ class __SignInFormState extends State<_SignInForm> {
                     controller: _usernameController,
                     keyboardType: TextInputType.emailAddress,
                     autocorrect: false,
-                    validator: (value) {
-                      if (value == null) {
-                        return 'username is required.';
-                      }
-                      return null;
-                    },
                   ),
                   SizedBox(
                     height: 12,
@@ -208,6 +202,8 @@ class __SignInFormState extends State<_SignInForm> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10),
                     child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blueAccent),
                       child: Text('REGISTER'),
                       onPressed: () => {},
                     ),
@@ -215,11 +211,12 @@ class __SignInFormState extends State<_SignInForm> {
                   Padding(
                       padding: const EdgeInsets.only(top: 10),
                       child: ElevatedButton(
-                        //color: Theme.of(context).primaryColor,
+                        // color: Theme.of(context).primaryColor,
                         //textColor: Colors.white,
                         //padding: const EdgeInsets.all(16),
-                        //shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(8.0)),
                         // ignore: sort_child_properties_last
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blueAccent),
                         child: Text('LOG IN'),
                         onPressed: state is LoginLoading
                             ? () {}
@@ -234,8 +231,45 @@ class __SignInFormState extends State<_SignInForm> {
     );
   }
 
-  void _showError(String error) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
+  Future<void> _showError(String error) async {
+    /*
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('AlertDialog Title'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('This is a demo alert dialog.'),
+                Text('Would you like to approve of this message?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Approve'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+*/
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        error,
+        style: TextStyle(
+            color: Color.fromARGB(255, 117, 19, 12),
+            fontSize: 20,
+            fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
+      ),
+      backgroundColor: Color.fromARGB(255, 83, 117, 139),
+    ));
   }
 }
 
