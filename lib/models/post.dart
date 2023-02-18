@@ -25,27 +25,33 @@ class PostResponse {
 class Post {
   int? id;
   String? tag;
+  String? description;
   String? image;
   String? uploadDate;
   String? author;
+  String? authorFile;
   int? countLikes;
   List<Commentaries>? commentaries;
 
   Post(
       {this.id,
       this.tag,
+      this.description,
       this.image,
       this.uploadDate,
       this.author,
+      this.authorFile,
       this.countLikes,
       this.commentaries});
 
   Post.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     tag = json['tag'];
+    description = json['description'];
     image = json['image'];
     uploadDate = json['uploadDate'];
     author = json['author'];
+    authorFile = json['authorFile'];
     countLikes = json['countLikes'];
     if (json['commentaries'] != null) {
       commentaries = <Commentaries>[];
@@ -59,9 +65,11 @@ class Post {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['tag'] = this.tag;
+    data['description'] = this.description;
     data['image'] = this.image;
     data['uploadDate'] = this.uploadDate;
     data['author'] = this.author;
+    data['authorFile'] = this.authorFile;
     data['countLikes'] = this.countLikes;
     if (this.commentaries != null) {
       data['commentaries'] = this.commentaries!.map((v) => v.toJson()).toList();

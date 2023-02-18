@@ -6,7 +6,6 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
 import 'package:stream_transform/stream_transform.dart';
 
-
 var contador = -1;
 const throttleDuration = Duration(milliseconds: 100);
 
@@ -22,6 +21,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       _onPostFetched,
       transformer: throttleDroppable(throttleDuration),
     );
+    on<ResetCounter>(_onResetCounter);
   }
 
   final PostRepository postRepository;
@@ -44,16 +44,28 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         );
       }
       final posts = await postRepository.fetchPosts(contador);
-      posts.isEmpty
-          ? emit(state.copyWith(hasReachedMax: true))
-          : emit(
-              state.copyWith(
-                  status: PostStatus.success,
-                  posts: List.of(state.posts)..addAll(posts),
-                  hasReachedMax: false),
-            );
+      if (posts.isEmpty && state.status == PostStatus.success) {
+        contador = 0; // Reiniciar el contador a 0
+        emit(state.copyWith(hasReachedMax: true));
+      } else {
+        emit(
+          state.copyWith(
+            status: PostStatus.success,
+            posts: List.of(state.posts)..addAll(posts),
+            hasReachedMax: false,
+          ),
+        );
+      }
     } catch (_) {
       emit(state.copyWith(status: PostStatus.failure));
     }
   }
+
+  void _onResetCounter(ResetCounter event, Emitter<PostState> emit) {
+    contador = -1;
+  }
+}
+
+class ResetCounter extends PostEvent {
+  ResetCounter();
 }

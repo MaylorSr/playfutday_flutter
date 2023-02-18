@@ -2,75 +2,190 @@
 
 import 'package:flutter/material.dart';
 import 'package:playfutday_flutter/models/models.dart';
+import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
+
+import '../../services/authentication_service.dart';
 
 class PostListItem extends StatelessWidget {
-  PostListItem({super.key, required this.post});
-  /*'${post.tag}'*/
-  int _likes = 0;
-  final Post post;
+  PostListItem({
+    Key? key,
+    required this.post,
+    required this.postRepository,
+    required User user,
+  }) : super(key: key);
 
+  final Post post;
+  final PostRepository postRepository;
+  final AuthenticationService _authService = JwtAuthenticationService();
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: new EdgeInsets.symmetric(vertical: 20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ListTile(
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(
-                'https://source.unsplash.com/random',
-              ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Card(
+        margin: EdgeInsets.symmetric(vertical: 20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(30),
+                  child: FutureBuilder<Image>(
+                    future: postRepository.getImage('${post.authorFile}'),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Container(
+                          margin: EdgeInsets.symmetric(horizontal: 10.0),
+                          width: 40,
+                          height: 40,
+                          child: CircleAvatar(
+                            backgroundImage: snapshot.data!.image,
+                          ),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('${snapshot.error}');
+                      } else {
+                        return CircularProgressIndicator();
+                      }
+                    },
+                  ),
+                ),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    '${post.author}',
+                    // ignore: prefer_const_constructors
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Visibility(
+                  visible: '${post.author}' != '${'user'}',
+                  child: Row(
+                    // ignore: prefer_const_literals_to_create_immutables
+                    children: [
+                      Text(
+                        '...',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            title: Text('${post.author}'),
-          ),
-          Container(
-          
-            color: Color.fromARGB(255, 11, 87, 150),
-            margin: new EdgeInsets.symmetric(horizontal: 10.0),
-            constraints: BoxConstraints(
-              maxHeight: 480, // Tamaño máximo de la imagen
-              minHeight: 380, // Tamaño mínimo de la imagen
-            ),
-            child: Image.network(
-              '${post.image}',
-              fit:
-                  BoxFit.cover, // Escala la imagen para ajustarse al contenedor
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text('widget.caption'),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Expanded(
-                child: IconButton(
-                  icon: Icon(Icons.favorite),
-                  color: _likes > 0 ? Colors.red : null,
-                  onPressed: () {
-                    /*
-                    setState(() {
-                      _likes++;
-                    });*/
-                  },
+            Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: FutureBuilder<Image>(
+                    future: postRepository.getImage('${post.image}'),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Image(
+                          image: snapshot.data!.image,
+                          fit: BoxFit.cover,
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text('${snapshot.error}');
+                      } else {
+                        return CircularProgressIndicator();
+                      }
+                    },
+                  ),
+                )),
+            if (post.description != null)
+              Container(
+                padding:
+                    const EdgeInsets.only(top: 10.0, bottom: 5.0, left: 5.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(0.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          SizedBox(width: 3),
+                          Text(
+                            '${post.author}: ',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            '${post.description}',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              Expanded(
-                child: Text('${post.countLikes}'),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(
+                        height: 8,
+                        width: 8,
+                      ),
+                      Text(
+                        '${post.tag}',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w400
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {},
+                        child: Icon(
+                          Icons.favorite_border,
+                          size: 28,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        '${post.countLikes}',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(width: 16),
+                      InkWell(
+                        onTap: () {},
+                        child: Icon(
+                          Icons.chat_bubble_outline,
+                          size: 28,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        '${post.commentaries == null ? 0 : post.commentaries!.length} ',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              Expanded(
-                child: IconButton(
-                  icon: Icon(Icons.comment),
-                  onPressed: () {
-                    // Abrir la pantalla de comentarios aquí
-                  },
-                ),
-              ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

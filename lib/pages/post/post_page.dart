@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:playfutday_flutter/blocs/export.dart';
+import 'package:playfutday_flutter/models/models.dart';
 import 'package:playfutday_flutter/pages/post/post_list.dart';
+import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
+import 'package:playfutday_flutter/repositories/repositories.dart';
 
 import 'bottom_loader.dart';
 
@@ -14,7 +17,8 @@ class PostList extends StatefulWidget {
 
 class _PostListState extends State<PostList> {
   final _scrollController = ScrollController();
-
+  final _postRepository = PostRepository();
+  final _user = User();
   @override
   void initState() {
     super.initState();
@@ -27,18 +31,24 @@ class _PostListState extends State<PostList> {
       builder: (context, state) {
         switch (state.status) {
           case PostStatus.failure:
-            return const Center(child: Text('failed to get posts!'));
+            return const Center(
+              child: Text('failed to get posts!'),
+            );
           case PostStatus.success:
             if (state.posts.isEmpty) {
-              return const Center(child: Text('Any post was find'));
+              return const Center(child: Text('Any post was found'));
             }
             return ListView.builder(
               itemBuilder: (BuildContext context, int index) {
                 return index >= state.posts.length
                     ? const BottomLoader()
-                    : PostListItem(post: state.posts[index]);
+                    : PostListItem(
+                        post: state.posts[index],
+                        postRepository: _postRepository,
+                        user: _user,
+                      );
               },
-              scrollDirection:Axis.vertical,
+              scrollDirection: Axis.vertical,
               itemCount: state.hasReachedMax
                   ? state.posts.length
                   : state.posts.length + 1,
