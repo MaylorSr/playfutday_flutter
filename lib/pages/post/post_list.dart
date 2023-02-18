@@ -33,7 +33,7 @@ class PostListItem extends StatelessWidget {
               minHeight: 380, // Tamaño mínimo de la imagen
             ),
             child: Image.network(
-              'widget.imageUrl',
+              '${post.image}',
               fit:
                   BoxFit.cover, // Escala la imagen para ajustarse al contenedor
             ),

@@ -30,7 +30,7 @@ class _PostListState extends State<PostList> {
             return const Center(child: Text('failed to get posts!'));
           case PostStatus.success:
             if (state.posts.isEmpty) {
-              return const Center(child: Text('no post find'));
+              return const Center(child: Text('Any post was find'));
             }
             return ListView.builder(
               itemBuilder: (BuildContext context, int index) {

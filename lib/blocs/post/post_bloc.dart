@@ -7,7 +7,7 @@ import 'package:playfutday_flutter/repositories/post_repositories/post_repositor
 import 'package:stream_transform/stream_transform.dart';
 
 
-var contador = 1;
+var contador = -1;
 const throttleDuration = Duration(milliseconds: 100);
 
 EventTransformer<E> throttleDroppable<E>(Duration duration) {
