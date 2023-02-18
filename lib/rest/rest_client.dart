@@ -8,6 +8,7 @@ import 'package:http_interceptor/http_interceptor.dart';
 import 'package:injectable/injectable.dart';
 import 'package:http/http.dart' as http;
 import 'package:playfutday_flutter/main.dart';
+import 'package:playfutday_flutter/repositories/user_repository.dart';
 import 'package:playfutday_flutter/services/localstorage_service.dart';
 
 class ApiConstants {
@@ -68,7 +69,6 @@ class RestClient {
   Future<dynamic> post(String url, dynamic body) async {
     try {
       Uri uri = Uri.parse(ApiConstants.baseUrl + url);
-
       final response = await _httpClient.post(uri, body: jsonEncode(body));
       var responseJson = _response(response);
       return responseJson;
@@ -186,4 +186,5 @@ class RestAuthenticatedClient extends RestClient {
   RestAuthenticatedClient()
       : super.withInterceptors(
             List.of(<InterceptorContract>[AuthorizationInterceptor()]));
+
 }

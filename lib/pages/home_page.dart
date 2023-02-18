@@ -1,11 +1,15 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:playfutday_flutter/blocs/authentication/authentication.dart';
-import '../config/locator.dart';
+import 'package:playfutday_flutter/blocs/export.dart';
+import 'package:playfutday_flutter/pages/post/post_page.dart';
+import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
 import '../models/models.dart';
 import '../models/user.dart';
-import '../services/authentication_service.dart';
 
+
+/*
 class HomePage extends StatelessWidget {
   final User user;
 
@@ -16,9 +20,22 @@ class HomePage extends StatelessWidget {
     final authBloc = BlocProvider.of<AuthenticationBloc>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Page'),
+        backgroundColor: Colors.white,
+        title: Text('PlayFutDay',
+            style: TextStyle(
+                color: Colors.black,
+                fontStyle: FontStyle.italic,
+                fontSize: 18,
+                fontWeight: FontWeight.w600)),
       ),
-      body: SafeArea(
+      final postService = PostService();
+
+      body: BlocProvider(
+        create: (_) => PostBloc(postService: postService)..add(PostFetched()),
+        child: const PostList(),
+      ),
+
+      /*SafeArea(
         minimum: const EdgeInsets.all(16),
         child: Center(
           child: Column(
@@ -50,7 +67,34 @@ class HomePage extends StatelessWidget {
                   child: Text('Check'))
             ],
           ),
-        ),
+        ),*/
+    );
+  }
+}*/
+
+class HomePage extends StatelessWidget {
+  final User user;
+  final PostRepository postRepository;
+  const HomePage({super.key, required this.user, required this.postRepository});
+
+  @override
+  Widget build(BuildContext context) {
+    // move the line here
+    final authBloc = BlocProvider.of<AuthenticationBloc>(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: Text('PlayFutDay',
+            style: TextStyle(
+                color: Colors.black,
+                fontStyle: FontStyle.italic,
+                fontSize: 18,
+                fontWeight: FontWeight.w600)),
+      ),
+      body: BlocProvider(
+        create: (_) => PostBloc(postRepository)..add(PostFetched()),
+        child: const PostList(),
       ),
     );
   }

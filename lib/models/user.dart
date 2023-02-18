@@ -1,42 +1,5 @@
 import 'login.dart';
 
-/*class User {
-  String? id;
-  String? username;
-  String? avatar;
-  String? fullName;
-
-  User({this.id, this.username, this.avatar, this.fullName});
-
-  User.fromLoginResponse(LoginResponse response) {
-    this.id = response.id;
-    this.username = response.username;
-    this.avatar = response.avatar;
-    this.fullName = response.fullName;
-  }
-}
-
-class UserResponse extends User {
-  UserResponse(id, username, fullName, avatar)
-      : super(id: id, username: username, fullName: fullName, avatar: avatar);
-
-  UserResponse.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    username = json['username'];
-    avatar = json['avatar'];
-    fullName = json['fullName'];
-  }
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['username'] = this.username;
-    data['avatar'] = this.avatar;
-    data['fullName'] = this.fullName;
-    return data;
-  }
-}
-*/
-
 class User {
   String? id;
   String? username;
@@ -104,7 +67,7 @@ class MyPost {
   String? uploadDate;
   String? author;
   int? countLikes;
-  List<Commentaries>? commentaries;
+  List<UserCommentaries>? commentaries;
 
   MyPost(
       {this.id,
@@ -123,9 +86,9 @@ class MyPost {
     author = json['author'];
     countLikes = json['countLikes'];
     if (json['commentaries'] != null) {
-      commentaries = <Commentaries>[];
+      commentaries = <UserCommentaries>[];
       json['commentaries'].forEach((v) {
-        commentaries!.add(new Commentaries.fromJson(v));
+        commentaries!.add(new UserCommentaries.fromJson(v));
       });
     }
   }
@@ -145,14 +108,14 @@ class MyPost {
   }
 }
 
-class Commentaries {
+class UserCommentaries {
   String? message;
   String? authorName;
   String? uploadCommentary;
 
-  Commentaries({this.message, this.authorName, this.uploadCommentary});
+  UserCommentaries({this.message, this.authorName, this.uploadCommentary});
 
-  Commentaries.fromJson(Map<String, dynamic> json) {
+  UserCommentaries.fromJson(Map<String, dynamic> json) {
     message = json['message'];
     authorName = json['authorName'];
     uploadCommentary = json['uploadCommentary'];
@@ -168,16 +131,18 @@ class Commentaries {
 }
 
 class UserResponse extends User {
-  UserResponse(username, avatar) : super();
+  UserResponse(username, avatar, toke) : super();
 
   UserResponse.fromJson(Map<String, dynamic> json) {
     username = json['username'];
     avatar = json['avatar'];
+    token = json['token'];
   }
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['username'] = username;
     data['avatar'] = avatar;
+    data['toke'] = token;
     return data;
   }
 }

@@ -1,18 +1,19 @@
 // ignore_for_file: unnecessary_null_comparison
 
-import 'package:get_it/get_it.dart';
-import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorageService {
   const LocalStorageService();
 
-  static late LocalStorageService _instance;
-  static late SharedPreferences _preferences;
+  static const _instance = LocalStorageService();
+  static late final SharedPreferences _preferences;
 
   static Future<LocalStorageService> getInstance() async {
-    print("Aquí se entra");
+    print("Aqui entra");
+    _preferences = await SharedPreferences.getInstance();
+    return _instance;
 
+/*
     _preferences = await SharedPreferences.getInstance();
 
     print("Aquí se llega");
@@ -20,7 +21,7 @@ class LocalStorageService {
     // ignore: prefer_const_constructors
     _instance = LocalStorageService();
 
-    return _instance;
+    return _instance;*/
   }
 
   dynamic getFromDisk(String key) {

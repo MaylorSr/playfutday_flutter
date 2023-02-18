@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:playfutday_flutter/models/models.dart';
 import 'package:playfutday_flutter/pages/home_page.dart';
 import 'package:playfutday_flutter/pages/login_page.dart';
+import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
 
 import 'package:playfutday_flutter/services/authentication_service.dart';
 
@@ -65,9 +67,11 @@ class MyApp extends StatelessWidget {
             // show home page
             return HomePage(
               user: state.user,
+              postRepository: PostRepository(),
             );
           }
           // otherwise show login page
+          // ignore: prefer_const_constructors
           return LoginPage();
         },
       ),
