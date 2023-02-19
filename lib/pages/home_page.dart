@@ -5,97 +5,160 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:playfutday_flutter/blocs/export.dart';
 import 'package:playfutday_flutter/pages/post/post_page.dart';
 import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
+import '../blocs/bottonNavigator/bottom_navigation_bloc.dart';
 import '../models/models.dart';
 import '../models/user.dart';
+import 'package:flutter/material.dart';
 
-
-/*
-class HomePage extends StatelessWidget {
-  final User user;
-
-  const HomePage({super.key, required this.user});
-
+class SearchPage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    final authBloc = BlocProvider.of<AuthenticationBloc>(context);
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text('PlayFutDay',
-            style: TextStyle(
-                color: Colors.black,
-                fontStyle: FontStyle.italic,
-                fontSize: 18,
-                fontWeight: FontWeight.w600)),
-      ),
-      final postService = PostService();
+  _SearchPageState createState() => _SearchPageState();
+}
 
-      body: BlocProvider(
-        create: (_) => PostBloc(postService: postService)..add(PostFetched()),
-        child: const PostList(),
-      ),
+class _SearchPageState extends State<SearchPage> {
+  String _searchQuery = '';
 
-      /*SafeArea(
-        minimum: const EdgeInsets.all(16),
-        child: Center(
-          child: Column(
-            children: <Widget>[
-              Text(
-                'Welcome, ${user.username}',
-                style: TextStyle(fontSize: 24),
-              ),
-              const SizedBox(
-                height: 12,
-              ),
-              ElevatedButton(
-                //textColor: Theme.of(context).primaryColor,
-                /*style: TextButton.styleFrom(
-                  primary: Theme.of(context).primaryColor,
-                ),*/
-                child: Text('Logout'),
-                onPressed: () {
-                  authBloc.add(UserLoggedOut());
-                },
-              ),
-              ElevatedButton(
-                  onPressed: () async {
-                    print("Check");
-                    JwtAuthenticationService service =
-                        getIt<JwtAuthenticationService>();
-                    await service.getCurrentUser();
-                  },
-                  child: Text('Check'))
-            ],
-          ),
-        ),*/
-    );
+  // Mock data for search results
+  final List<String> _data = [    'Result 1',    'Result 2',    'Result 3',    'Result 4',    'Result 5',  ];
+
+  List<String> _searchResults = [];
+
+  void _search() {
+    setState(() {
+      _searchResults = _data
+          .where((result) =>
+              result.toLowerCase().contains(_searchQuery.toLowerCase()))
+          .toList();
+    });
   }
-}*/
-
-class HomePage extends StatelessWidget {
-  final User user;
-  final PostRepository postRepository;
-  const HomePage({super.key, required this.user, required this.postRepository});
 
   @override
   Widget build(BuildContext context) {
-    // move the line here
-    final authBloc = BlocProvider.of<AuthenticationBloc>(context);
-
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text('PlayFutDay',
-            style: TextStyle(
-                color: Colors.black,
-                fontStyle: FontStyle.italic,
-                fontSize: 18,
-                fontWeight: FontWeight.w600)),
+        title: Text('Search'),
       ),
-      body: BlocProvider(
-        create: (_) => PostBloc(postRepository)..add(PostFetched()),
-        child: const PostList(),
+      body: Column(
+        children: <Widget>[
+          TextField(
+            decoration: InputDecoration(
+              hintText: 'Search...',
+            ),
+            onChanged: (query) {
+              setState(() {
+                _searchQuery = query;
+              });
+            },
+            onSubmitted: (query) {
+              _search();
+            },
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _searchResults.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(_searchResults[index]),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
 }
+
+class HomePage extends StatefulWidget {
+  final User user;
+  final PostRepository postRepository;
+
+  const HomePage({
+    super.key,
+    required this.user,
+    required this.postRepository,
+  });
+  @override
+  // ignore: library_private_types_in_public_api
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  late BottomNavigationBloc _bottomNavigationBloc;
+  int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    _bottomNavigationBloc = BottomNavigationBloc();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _bottomNavigationBloc.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home,
+                color: _selectedIndex == 0 ? Color.fromARGB(255, 0, 153, 255) : Colors.grey),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search,
+                color: _selectedIndex == 1 ? Color.fromARGB(255, 0, 153, 255) : Colors.grey),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person,
+                color: _selectedIndex == 2 ? Color.fromARGB(255, 0, 153, 255) : Colors.grey),
+            label: 'Profile',
+          ),
+        ],
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+          _bottomNavigationBloc.setIndex(index);
+        },
+      ),
+      body: StreamBuilder<int>(
+        stream: _bottomNavigationBloc.indexStream,
+        initialData: 0,
+        builder: (context, snapshot) {
+          switch (snapshot.data) {
+            case 0:
+              return Scaffold(
+                  appBar: AppBar(
+                    backgroundColor: Colors.white,
+                    title: Text('PlayFutDay',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontStyle: FontStyle.italic,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600)),
+                  ),
+                  body: BlocProvider(
+                    create: (_) =>
+                        PostBloc(widget.postRepository)..add(PostFetched()),
+                    child: PostList(),
+                  ));
+            case 1:
+              return SearchPage();/*
+            case 2:
+              return ProfileScreen();*/
+            default:
+              return Container();
+          }
+        },
+      ),
+    );
+  }
+}
+
