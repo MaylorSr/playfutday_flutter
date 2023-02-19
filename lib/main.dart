@@ -4,6 +4,8 @@ import 'package:playfutday_flutter/models/models.dart';
 import 'package:playfutday_flutter/pages/home_page.dart';
 import 'package:playfutday_flutter/pages/login_page.dart';
 import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
+import 'package:playfutday_flutter/repositories/post_repositories/search_repository.dart';
+import 'package:playfutday_flutter/repositories/user_repository.dart';
 
 import 'package:playfutday_flutter/services/authentication_service.dart';
 
@@ -68,6 +70,8 @@ class MyApp extends StatelessWidget {
             return HomePage(
               user: state.user,
               postRepository: PostRepository(),
+              userRepository: UserRepository(),
+              searchRepositories: SearchRepositories(),
             );
           }
           // otherwise show login page

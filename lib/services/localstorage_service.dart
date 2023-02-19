@@ -12,16 +12,6 @@ class LocalStorageService {
     print("Aqui entra");
     _preferences = await SharedPreferences.getInstance();
     return _instance;
-
-/*
-    _preferences = await SharedPreferences.getInstance();
-
-    print("Aquí se llega");
-
-    // ignore: prefer_const_constructors
-    _instance = LocalStorageService();
-
-    return _instance;*/
   }
 
   dynamic getFromDisk(String key) {

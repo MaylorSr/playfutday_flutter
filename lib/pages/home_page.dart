@@ -3,80 +3,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:playfutday_flutter/blocs/export.dart';
+import 'package:playfutday_flutter/blocs/search/search_bloc.dart';
+import 'package:playfutday_flutter/blocs/search/search_state.dart';
 import 'package:playfutday_flutter/pages/post/post_page.dart';
+import 'package:playfutday_flutter/pages/profile/profile_page.dart';
+import 'package:playfutday_flutter/pages/search/search_page.dart';
 import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
+import 'package:playfutday_flutter/repositories/post_repositories/search_repository.dart';
+import 'package:playfutday_flutter/repositories/user_repository.dart';
 import '../blocs/bottonNavigator/bottom_navigation_bloc.dart';
 import '../models/models.dart';
 import '../models/user.dart';
-import 'package:flutter/material.dart';
-
-class SearchPage extends StatefulWidget {
-  @override
-  _SearchPageState createState() => _SearchPageState();
-}
-
-class _SearchPageState extends State<SearchPage> {
-  String _searchQuery = '';
-
-  // Mock data for search results
-  final List<String> _data = [    'Result 1',    'Result 2',    'Result 3',    'Result 4',    'Result 5',  ];
-
-  List<String> _searchResults = [];
-
-  void _search() {
-    setState(() {
-      _searchResults = _data
-          .where((result) =>
-              result.toLowerCase().contains(_searchQuery.toLowerCase()))
-          .toList();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Search'),
-      ),
-      body: Column(
-        children: <Widget>[
-          TextField(
-            decoration: InputDecoration(
-              hintText: 'Search...',
-            ),
-            onChanged: (query) {
-              setState(() {
-                _searchQuery = query;
-              });
-            },
-            onSubmitted: (query) {
-              _search();
-            },
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _searchResults.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(_searchResults[index]),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class HomePage extends StatefulWidget {
   final User user;
   final PostRepository postRepository;
+  final UserRepository userRepository;
+  final SearchRepositories searchRepositories;
 
   const HomePage({
     super.key,
     required this.user,
     required this.postRepository,
+    required this.userRepository,
+    required this.searchRepositories,
   });
   @override
   // ignore: library_private_types_in_public_api
@@ -107,17 +57,37 @@ class _HomePageState extends State<HomePage> {
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home,
-                color: _selectedIndex == 0 ? Color.fromARGB(255, 0, 153, 255) : Colors.grey),
+                color: _selectedIndex == 0
+                    ? Color.fromARGB(255, 0, 153, 255)
+                    : Colors.grey),
             label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search,
-                color: _selectedIndex == 1 ? Color.fromARGB(255, 0, 153, 255) : Colors.grey),
+                color: _selectedIndex == 1
+                    ? Color.fromARGB(255, 0, 153, 255)
+                    : Colors.grey),
             label: 'Search',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.add,
+                color: _selectedIndex == 2
+                    ? Color.fromARGB(255, 0, 153, 255)
+                    : Colors.grey),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite,
+                color: _selectedIndex == 3
+                    ? Color.fromARGB(255, 0, 153, 255)
+                    : Colors.grey),
+            label: 'Fav',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.person,
-                color: _selectedIndex == 2 ? Color.fromARGB(255, 0, 153, 255) : Colors.grey),
+                color: _selectedIndex == 4
+                    ? Color.fromARGB(255, 0, 153, 255)
+                    : Colors.grey),
             label: 'Profile',
           ),
         ],
@@ -150,9 +120,17 @@ class _HomePageState extends State<HomePage> {
                     child: PostList(),
                   ));
             case 1:
-              return SearchPage();/*
-            case 2:
-              return ProfileScreen();*/
+              return BlocProvider(
+                  create: (_) => SearchBloc(widget.searchRepositories)
+                    ..add(PerformSearch('messi')),
+                  child: SearchPage());
+            case 4:
+              return Scaffold(
+                  body: BlocProvider(
+                      create: (_) => ProfileBloc(widget.userRepository),
+                      child:
+                          ProfileScreen(ProfileBloc(widget.userRepository))));
+
             default:
               return Container();
           }
@@ -161,4 +139,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
