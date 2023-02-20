@@ -8,7 +8,8 @@ import 'package:playfutday_flutter/repositories/post_repositories/post_repositor
 import 'bottom_loader.dart';
 
 class PostList extends StatefulWidget {
-  const PostList({super.key});
+  const PostList({super.key, required this.user});
+  final User user;
 
   @override
   State<PostList> createState() => _PostListState();

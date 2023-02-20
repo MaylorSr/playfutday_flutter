@@ -62,7 +62,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   }
 
   void _onResetCounter(ResetCounter event, Emitter<PostState> emit) {
-    contador = -1;
+    contador = 0;
   }
 }
 

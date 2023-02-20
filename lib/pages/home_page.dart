@@ -11,6 +11,9 @@ import 'package:playfutday_flutter/repositories/post_repositories/search_reposit
 import '../blocs/bottonNavigator/bottom_navigation_bloc.dart';
 import '../blocs/fav/fav_bloc.dart';
 import '../blocs/fav/fav_state.dart';
+import '../blocs/photo/photo_bloc.dart';
+import '../blocs/photo/route/generate_route.dart';
+import '../blocs/photo/route/route_nanme.dart';
 import '../models/models.dart';
 import '../models/user.dart';
 import 'fav/post_pageFav.dart';
@@ -19,7 +22,7 @@ import 'login_page.dart';
 class HomePage extends StatefulWidget {
   final PostRepository postRepository;
   final SearchRepositories searchRepositories;
-   final User user;
+  final User user;
 
   const HomePage(
       {required this.postRepository,
@@ -48,7 +51,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -112,14 +114,37 @@ class _HomePageState extends State<HomePage> {
                             fontSize: 18,
                             fontWeight: FontWeight.w600)),
                   ),
-                  body: BlocProvider(
+                  body: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                    builder: (context, state) {
+                      if (state is AuthenticationAuthenticated) {
+                        return BlocProvider(
+                            create: (_) => PostBloc(widget.postRepository)
+                              ..add(PostFetched()),
+                            child: PostList(
+                              user: state.user,
+                            ));
+                      } else {
+                        return LoginPage();
+                      }
+                    },
+                  )
+                  /* BlocProvider(
                     create: (_) =>
                         PostBloc(widget.postRepository)..add(PostFetched()),
                     child: PostList(),
-                  ));
+                  )*/
+                  );
             case 1:
               return SearchScreen(
                 searchRepository: widget.searchRepositories,
+              );
+            case 2:
+              return BlocProvider(
+                create: (_) => PhotoBloc(),
+                child: MaterialApp(
+                  initialRoute: routeHome,
+                  onGenerateRoute: RouteGenerator.generateRoute,
+                ),
               );
             case 3:
               return Scaffold(
@@ -141,7 +166,10 @@ class _HomePageState extends State<HomePage> {
               return BlocBuilder<AuthenticationBloc, AuthenticationState>(
                 builder: (context, state) {
                   if (state is AuthenticationAuthenticated) {
-                    return ProfileScreen(user: state.user, postRepository: PostRepository(),);
+                    return ProfileScreen(
+                      user: state.user,
+                      postRepository: PostRepository(),
+                    );
                   } else {
                     return LoginPage();
                   }

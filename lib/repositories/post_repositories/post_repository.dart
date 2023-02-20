@@ -39,12 +39,13 @@ class PostRepository {
       headers: {'Authorization': 'Bearer $token'},
     );
 
+    print(response.statusCode);
     return PostResponse.fromJson(jsonDecode(response.body)).content
         as List<Post>;
   }
 
 // ignore: no_leading_underscores_for_local_identifiers
-  Future<List<Content>> fetchPostsFav([int _startIndex = -1]) async {
+  Future<List<Content>> fetchPostsFav([int _startIndex = 0]) async {
 // ignore: unnecessary_brace_in_string_interps, unused_local_variable
     String page = "/fav?page=${_startIndex}";
 
@@ -55,6 +56,7 @@ class PostRepository {
       headers: {'Authorization': 'Bearer $token'},
     );
     print(response.statusCode);
+    print(response.body);
 
     return PostFav.fromJson(jsonDecode(response.body)).content as List<Content>;
   }
@@ -84,6 +86,7 @@ class PostRepository {
         headers: {'Authorization': 'Bearer $token'}, body: jsonEncode(idPost));
     print('The status code of your peticion are:');
     print(response.statusCode);
+    print(response.body);
     if (response.statusCode == 201) return true;
     return false;
   }

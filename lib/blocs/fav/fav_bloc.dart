@@ -8,7 +8,7 @@ import 'package:stream_transform/stream_transform.dart';
 import 'fav_event.dart';
 import 'fav_state.dart';
 
-var contador = -1;
+var contador = 0;
 const throttleDuration = Duration(milliseconds: 100);
 
 EventTransformer<E> throttleDroppable<E>(Duration duration) {

@@ -10,9 +10,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   SearchBloc(this.searchRepository) : super(SearchInitial()) {
     // ignore: void_checks
     on<SearchQueryChanged>((event, emit) async* {
-      yield SearchLoading();
+      emit(SearchLoading());
       final results = await searchRepository.searchRepositories(event.query);
-      yield SearchLoaded(results);
+      emit(SearchLoaded(results));
     });
   }
 }

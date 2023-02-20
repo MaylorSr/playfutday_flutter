@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, library_private_types_in_public_api
 
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:playfutday_flutter/models/models.dart';
 import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
@@ -20,7 +22,7 @@ class _LikeButtonState extends State<LikeButton> {
     return InkWell(
       onTap: () {
         setState(() {
-          _postRepository.postLikeByMe(idPost);
+          _postRepository.postLikeByMe(widget.idPost);
           _isLiked = !_isLiked;
         });
       },
@@ -33,11 +35,12 @@ class _LikeButtonState extends State<LikeButton> {
 }
 
 class PostListItem extends StatelessWidget {
+  final User user;
   const PostListItem({
     Key? key,
     required this.post,
     required this.postRepository,
-    required User user,
+    required this.user,
   }) : super(key: key);
 
   final Post post;
@@ -89,7 +92,7 @@ class PostListItem extends StatelessWidget {
                   ),
                 ),
                 Visibility(
-                  visible: '${post.author}' != '${'user'}',
+                  visible: '${post.author}' != '${'user.username'}',
                   child: Row(
                     // ignore: prefer_const_literals_to_create_immutables
                     children: [

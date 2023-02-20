@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:playfutday_flutter/models/favPost.dart';
-import 'package:playfutday_flutter/models/models.dart';
 
 enum FavStatus { initial, success, failure }
 

@@ -21,13 +21,12 @@ class LoginPage extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-
-                /*image: DecorationImage(
+              image: DecorationImage(
                   image: NetworkImage(
                       'https://w0.peakpx.com/wallpaper/635/286/HD-wallpaper-football-lovers-abo-trika-cadillacs-mbappe-messi-ramos-ronaldo-salah-totti.jpg'),
                   fit: BoxFit.cover,
-                  repeat: ImageRepeat.noRepeat),*/
-                ),
+                  repeat: ImageRepeat.noRepeat),
+            ),
           ),
           SafeArea(
             minimum: const EdgeInsets.all(16),
