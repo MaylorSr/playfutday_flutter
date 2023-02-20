@@ -1,50 +1,23 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:playfutday_flutter/models/favPost.dart';
 import 'package:playfutday_flutter/models/models.dart';
 import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
 
 import '../../services/authentication_service.dart';
 
-class LikeButton extends StatefulWidget {
-  const LikeButton({Key? key}) : super(key: key);
-
-  @override
-  _LikeButtonState createState() => _LikeButtonState();
-}
-
-class _LikeButtonState extends State<LikeButton> {
-  bool _isLiked = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        setState(() {
-          _isLiked = !_isLiked;
-        });
-      },
-      child: Icon(
-        _isLiked ? Icons.favorite : Icons.favorite_border,
-        color: _isLiked ? Colors.red : null,
-      ),
-    );
-  }
-}
-
-class PostListItem extends StatelessWidget {
-  const PostListItem({
+class PostListItemFav extends StatelessWidget {
+  PostListItemFav({
     Key? key,
     required this.post,
     required this.postRepository,
     required User user,
   }) : super(key: key);
 
-  final Post post;
+  final Content post;
   final PostRepository postRepository;
-
-  final bool _isLiked = false;
-
+  final AuthenticationService _authService = JwtAuthenticationService();
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -125,38 +98,6 @@ class PostListItem extends StatelessWidget {
                     },
                   ),
                 )),
-            if (post.description != null)
-              Container(
-                padding:
-                    const EdgeInsets.only(top: 10.0, bottom: 5.0, left: 5.0),
-                child: Padding(
-                  padding: const EdgeInsets.all(0.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          SizedBox(width: 3),
-                          Text(
-                            '${post.author}: ',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            '${post.description}',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: Column(
@@ -175,10 +116,14 @@ class PostListItem extends StatelessWidget {
                             fontStyle: FontStyle.italic,
                             fontWeight: FontWeight.w400),
                       ),
+                      InkWell(
+                        onTap: () {},
+                        child: Icon(
+                          Icons.favorite_border,
+                          size: 28,
+                        ),
+                      ),
                       SizedBox(width: 8),
-                      LikeButton(),
-                      SizedBox(width: 3),
-                      SizedBox(width: 3),
                       Text(
                         '${post.countLikes}',
                         style: TextStyle(
@@ -193,24 +138,12 @@ class PostListItem extends StatelessWidget {
                           Icons.chat_bubble_outline,
                           size: 28,
                         ),
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        '${post.commentaries == null ? 0 : post.commentaries!.length} ',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                      )
                     ],
                   ),
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Text('${post.uploadDate}'),
-            )
           ],
         ),
       ),

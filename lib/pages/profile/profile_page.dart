@@ -2,70 +2,105 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart';
 import 'package:playfutday_flutter/blocs/export.dart';
+import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
+
+import '../../config/locator.dart';
+import '../../models/user.dart';
+import '../../services/authentication_service.dart';
 
 class ProfileScreen extends StatelessWidget {
-  final ProfileBloc _bloc;
+  final User user;
+  final PostRepository postRepository;
 
-  const ProfileScreen(this._bloc, {Key? key}) : super(key: key);
+  const ProfileScreen(
+      {Key? key, required this.user, required this.postRepository})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocBuilder<ProfileBloc, ProfileState>(
-        bloc: _bloc, // Dispatch LoadProfileEvent when the widget is built
-        builder: (context, state) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [/*
-              CircleAvatar(
-                radius: 50.0,
-                backgroundImage: AssetImage('assets/profile_picture.jpg'),
-              ),*/
-              SizedBox(height: 16.0),
-              Text(
-                state.username,
-                style: TextStyle(
-                  fontSize: 24.0,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 8.0),
-              Text(
-                state.biography,
-                style: TextStyle(
-                  fontSize: 16.0,
-                  color: Colors.grey,
-                ),
-              ),
-              SizedBox(height: 8.0),
-              ElevatedButton(
-                child: Text('Editar perfil'),
-                onPressed: () => _bloc.add(EditProfileEvent()),
-              ),
-              Divider(),
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 2.0,
-                  crossAxisSpacing: 2.0,
-                  children: state.myPost
-                      .map((image) => Container(
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage('image'),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ))
-                      .toList(),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(30),
+                child: FutureBuilder<Image>(
+                  future: postRepository.getImage('${user.avatar}'),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return SizedBox(
+                        width: 120,
+                        height: 120,
+                        child: CircleAvatar(
+                          backgroundImage: snapshot.data!.image,
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('${snapshot.error}');
+                    } else {
+                      // ignore: prefer_const_constructors
+                      return CircularProgressIndicator();
+                    }
+                  },
                 ),
               ),
             ],
-          );
-        },
-      ),
+          ),
+        ),
+        // ignore: prefer_const_constructors
+        SizedBox(height: 16.0),
+        Padding(
+          padding: const EdgeInsets.only(left: 10.0),
+          child: Text(
+            '@${user.username}',
+            style: TextStyle(
+              fontSize: 24.0,
+              color: Colors.black,
+              fontWeight: FontWeight.w500,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+        ),
+        if (user.biography != null) ...[
+          // ignore: prefer_const_constructors
+          SizedBox(height: 8.0),
+          Padding(
+            padding: const EdgeInsets.only(top: 5.0, left: 25.0),
+            child: Text(
+              '${user.biography}',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w300,
+              ),
+            ),
+          ),
+        ],
+        if (user.email != null) ...[
+          // ignore: prefer_const_constructors
+          SizedBox(height: 8.0),
+          Padding(
+            padding: const EdgeInsets.only(top: 5.0, left: 25.0),
+            child: Text(
+              '${user.biography}',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w300,
+              ),
+            ),
+          ),
+        ],
+        SizedBox(height: 8.0),
+        ElevatedButton(
+          child: Text('Editar perfil'),
+          onPressed: () {},
+        ),
+        Divider(),
+      ],
     );
   }
 }

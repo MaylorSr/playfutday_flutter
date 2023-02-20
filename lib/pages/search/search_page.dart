@@ -5,60 +5,79 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:playfutday_flutter/repositories/post_repositories/search_repository.dart';
 
 import '../../blocs/search/search_bloc.dart';
+import '../../blocs/search/search_event.dart';
 import '../../blocs/search/search_state.dart';
 
-class SearchPage extends StatefulWidget {
-  const SearchPage({super.key});
+class SearchScreen extends StatefulWidget {
+  final SearchRepositories searchRepository;
+
+  SearchScreen({required this.searchRepository});
 
   @override
-  _SearchPageState createState() => _SearchPageState();
+  _SearchScreenState createState() => _SearchScreenState();
 }
 
-class _SearchPageState extends State<SearchPage> {
-  final _textController = TextEditingController();
-  final _searchRepositories = SearchRepositories();
+class _SearchScreenState extends State<SearchScreen> {
+  final _searchController = TextEditingController();
+  late SearchBloc _searchBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchBloc = SearchBloc(widget.searchRepository);
+    _searchController.addListener(() {
+      final query = _searchController.text;
+      if (query.isNotEmpty) {
+        _searchBloc.add(SearchQueryChanged(query));
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchBloc.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => SearchBloc(_searchRepositories),
-      child: Scaffold(
-        appBar: AppBar(
-          title: TextField(
-            controller: _textController,
-            decoration: InputDecoration(
-              hintText: 'Search',
-              border: InputBorder.none,
-            ),
-            onSubmitted: (value) {
-              context.read<SearchBloc>().add(PerformSearch(value));
-            },
+    return Scaffold(
+      appBar: AppBar(
+        title: TextField(
+          controller: _searchController,
+          decoration: InputDecoration(
+            hintText: 'Search',
           ),
-        ),
-        body: BlocBuilder<SearchBloc, SearchState>(
-          builder: (context, state) {
-            if (state is SearchLoading) {
-              return Center(child: CircularProgressIndicator());
-            } else if (state is SearchLoaded) {
-              final repositories = state.repositories;
-              return repositories.isNotEmpty
-                  ? ListView.builder(
-                      itemCount: repositories.length,
-                      itemBuilder: (context, index) {
-                        final repository = repositories[index];
-                        return ListTile(
-                          title: Text('${repository.author}'),
-                          onTap: () {
-                            // Navigate to repository details page
-                          },
-                        );
-                      },
-                    )
-                  : Center(child: Text('No results'));
-            } else {
-              return Container();
-            }
+          onSubmitted: (query) {
+            _searchBloc.add(SearchQueryChanged(query));
           },
         ),
+      ),
+      body: BlocBuilder<SearchBloc, SearchState>(
+        bloc: _searchBloc,
+        builder: (context, state) {
+          if (state is SearchLoading) {
+            return Center(child: CircularProgressIndicator());
+          } else if (state is SearchLoaded) {
+            final results = state.results;
+            return ListView.builder(
+              itemCount: results.length,
+              itemBuilder: (context, index) {
+                final result = results[index];
+                return ListTile(
+                  title: Text('${result.author}'),
+                  /*
+                  subtitle: Text('${result.description}'),*/
+                  onTap: () {
+                    // Navigate to details screen for result
+                  },
+                );
+              },
+            );
+          } else {
+            return Container();
+          }
+        },
       ),
     );
   }

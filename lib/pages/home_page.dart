@@ -3,31 +3,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:playfutday_flutter/blocs/export.dart';
-import 'package:playfutday_flutter/blocs/search/search_bloc.dart';
-import 'package:playfutday_flutter/blocs/search/search_state.dart';
 import 'package:playfutday_flutter/pages/post/post_page.dart';
 import 'package:playfutday_flutter/pages/profile/profile_page.dart';
 import 'package:playfutday_flutter/pages/search/search_page.dart';
 import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
 import 'package:playfutday_flutter/repositories/post_repositories/search_repository.dart';
-import 'package:playfutday_flutter/repositories/user_repository.dart';
 import '../blocs/bottonNavigator/bottom_navigation_bloc.dart';
+import '../blocs/fav/fav_bloc.dart';
+import '../blocs/fav/fav_state.dart';
 import '../models/models.dart';
 import '../models/user.dart';
+import 'fav/post_pageFav.dart';
+import 'login_page.dart';
 
 class HomePage extends StatefulWidget {
-  final User user;
   final PostRepository postRepository;
-  final UserRepository userRepository;
   final SearchRepositories searchRepositories;
+   final User user;
 
-  const HomePage({
-    super.key,
-    required this.user,
-    required this.postRepository,
-    required this.userRepository,
-    required this.searchRepositories,
-  });
+  const HomePage(
+      {required this.postRepository,
+      required this.searchRepositories,
+      required this.user});
   @override
   // ignore: library_private_types_in_public_api
   _HomePageState createState() => _HomePageState();
@@ -51,6 +48,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -120,16 +118,35 @@ class _HomePageState extends State<HomePage> {
                     child: PostList(),
                   ));
             case 1:
-              return BlocProvider(
-                  create: (_) => SearchBloc(widget.searchRepositories)
-                    ..add(PerformSearch('messi')),
-                  child: SearchPage());
-            case 4:
+              return SearchScreen(
+                searchRepository: widget.searchRepositories,
+              );
+            case 3:
               return Scaffold(
+                  appBar: AppBar(
+                    backgroundColor: Colors.white,
+                    title: Text('PlayFutDay',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontStyle: FontStyle.italic,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600)),
+                  ),
                   body: BlocProvider(
-                      create: (_) => ProfileBloc(widget.userRepository),
-                      child:
-                          ProfileScreen(ProfileBloc(widget.userRepository))));
+                    create: (_) =>
+                        FavBloc(widget.postRepository)..add(FavFetched()),
+                    child: PostListFav(),
+                  ));
+            case 4:
+              return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                builder: (context, state) {
+                  if (state is AuthenticationAuthenticated) {
+                    return ProfileScreen(user: state.user, postRepository: PostRepository(),);
+                  } else {
+                    return LoginPage();
+                  }
+                },
+              );
 
             default:
               return Container();

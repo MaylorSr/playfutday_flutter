@@ -5,13 +5,22 @@ import 'package:playfutday_flutter/models/userLogin.dart';
 import 'package:playfutday_flutter/repositories/repositories.dart';
 
 import '../../models/post.dart';
-import '../../services/authentication_service.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  ProfileBloc(this._userRepository)
-      : super(ProfileState(username: '', biography: '', myPost: []));
+  ProfileBloc(UserRepository userRepository)
+      : _userRepository = userRepository,
+        super(ProfileState(username: '', biography: '', myPost: [])) {
+    on<LoadProfileEvent>((event, emit) async {
+      final user = await _userRepository.myInfo();
+      UserLogin u = user;
+      emit(ProfileState(
+        username: '${u.username}',
+        biography: '${u.biography}',
+        myPost: u.myPost?.cast<Post>() ?? [],
+      ));
+    });
+  }
   final UserRepository _userRepository;
-
   @override
   Stream<ProfileState> mapEventToState(ProfileEvent event) async* {
     if (event is LoadProfileEvent) {

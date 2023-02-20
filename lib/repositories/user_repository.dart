@@ -40,6 +40,8 @@ class UserRepository {
       headers: {'Authorization': 'Bearer $token'},
     );
 
+    print(response.statusCode);
     return UserLogin.fromJson(jsonDecode(response.body));
   }
 }
+

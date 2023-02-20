@@ -40,10 +40,11 @@ class JwtAuthenticationService extends AuthenticationService {
     // ignore: avoid_print
     print(token);
     if (token != null) {
-      User response = await _userRepository.me();
+      UserResponse response = await _userRepository.me();
       return User(
           avatar: response.avatar,
           username: response.username,
+          email: response.email,
           id: response.id);
     }
     return null;
@@ -57,6 +58,7 @@ class JwtAuthenticationService extends AuthenticationService {
     return User(
       avatar: response.avatar,
       username: response.username,
+      email: response.email
     );
   }
 

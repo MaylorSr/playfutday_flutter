@@ -57,28 +57,43 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     //GlobalContext.ctx = context;
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Authentication Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.teal,
-      ),
+        debugShowCheckedModeBanner: false,
+        title: 'Authentication Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.teal,
+        ),
+        home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+          builder: (context, state) {
+            GlobalContext.ctx = context;
+            if (state is AuthenticationAuthenticated) {
+              // show home page with authenticated user
+              return HomePage(
+                postRepository: PostRepository(),
+                searchRepositories: SearchRepositories(),
+                user: state.user, // pass authenticated user
+              );
+            }
+            // otherwise show login page
+            // ignore: prefer_const_constructors
+            return LoginPage();
+          },
+        )
+        /*
       home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
           GlobalContext.ctx = context;
           if (state is AuthenticationAuthenticated) {
             // show home page
             return HomePage(
-              user: state.user,
               postRepository: PostRepository(),
-              userRepository: UserRepository(),
-              searchRepositories: SearchRepositories(),
+              searchRepositories: SearchRepositories(), user: null,
             );
           }
           // otherwise show login page
           // ignore: prefer_const_constructors
           return LoginPage();
         },
-      ),
-    );
+      ),*/
+        );
   }
 }

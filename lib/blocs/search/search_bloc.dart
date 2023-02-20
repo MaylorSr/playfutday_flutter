@@ -1,22 +1,18 @@
-// ignore_for_file: override_on_non_overriding_member
-
 import 'package:bloc/bloc.dart';
+import 'package:playfutday_flutter/blocs/search/search_event.dart';
 import 'package:playfutday_flutter/blocs/search/search_state.dart';
-import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
-import 'package:playfutday_flutter/repositories/post_repositories/search_repository.dart';
+
+import '../../repositories/post_repositories/search_repository.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
-  SearchBloc(this.searchRepositories) : super(SearchInitial());
+  final SearchRepositories searchRepository;
 
-  final SearchRepositories searchRepositories;
-  @override
-  Stream<SearchState> mapEventToState(SearchEvent event) async* {
-    // ignore: unnecessary_type_check
-    if (event is SearchEvent) {
+  SearchBloc(this.searchRepository) : super(SearchInitial()) {
+    // ignore: void_checks
+    on<SearchQueryChanged>((event, emit) async* {
       yield SearchLoading();
-      final repositories =
-          await searchRepositories.searchRepositories(event.query);
-      yield SearchLoaded(repositories: repositories);
-    }
+      final results = await searchRepository.searchRepositories(event.query);
+      yield SearchLoaded(results);
+    });
   }
 }

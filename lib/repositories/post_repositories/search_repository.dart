@@ -29,12 +29,15 @@ class SearchRepositories {
   // ignore: unused_element
   Future<List<Post>> searchRepositories(String query) async {
     String? token = _localStorageService.getFromDisk('user_token');
-    String search = "/post/?s=tag:${query.toLowerCase()}";
-
+    /*  String search = "/post/?s=tag:${query.toLowerCase()}";
+*/
+    String search = "/post/?s=tag:messi";
     final response = await http.get(
       Uri.parse(url_base + search),
       headers: {'Authorization': 'Bearer $token'},
     );
+
+    print(response.statusCode);
 
     return PostResponse.fromJson(jsonDecode(response.body)).content
         as List<Post>;

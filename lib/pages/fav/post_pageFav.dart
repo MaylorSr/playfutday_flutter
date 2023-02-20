@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:playfutday_flutter/blocs/export.dart';
 import 'package:playfutday_flutter/models/models.dart';
-import 'package:playfutday_flutter/pages/post/post_list.dart';
+import 'package:playfutday_flutter/pages/fav/post_listFav.dart';
 import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
 
-import 'bottom_loader.dart';
+import '../../blocs/fav/fav_bloc.dart';
+import '../../blocs/fav/fav_event.dart';
+import '../../blocs/fav/fav_state.dart';
+import '../post/bottom_loader.dart';
 
-class PostList extends StatefulWidget {
-  const PostList({super.key});
+class PostListFav extends StatefulWidget {
+  const PostListFav({super.key});
 
   @override
-  State<PostList> createState() => _PostListState();
+  State<PostListFav> createState() => _PostListFavState();
 }
 
-class _PostListState extends State<PostList> {
+class _PostListFavState extends State<PostListFav> {
   final _scrollController = ScrollController();
   final _postRepository = PostRepository();
   final _user = User();
-
   @override
   void initState() {
     super.initState();
@@ -27,34 +28,33 @@ class _PostListState extends State<PostList> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PostBloc, PostState>(
+    return BlocBuilder<FavBloc, FavState>(
       builder: (context, state) {
         switch (state.status) {
-          case PostStatus.failure:
+          case FavStatus.failure:
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Center(child: Text('failed to get posts!')),
                 ElevatedButton(
                   onPressed: () {
-                    context.read<PostBloc>().add(ResetCounter());
-                    context.read<PostBloc>().add(PostFetched());
+                    context.read<FavBloc>().add(ResetCounter());
+                    context.read<FavBloc>().add(FavFetched());
                   },
                   child: const Text('Try Again'),
                 ),
               ],
             );
-
-          case PostStatus.success:
-            if (state.posts.isEmpty) {
+          case FavStatus.success:
+            if (state.fav.isEmpty) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Center(child: Text('Any posts found!')),
                   ElevatedButton(
                     onPressed: () {
-                      context.read<PostBloc>().add(ResetCounter());
-                      context.read<PostBloc>().add(PostFetched());
+                      context.read<FavBloc>().add(ResetCounter());
+                      context.read<FavBloc>().add(FavFetched());
                     },
                     child: const Text('Try Again'),
                   ),
@@ -63,21 +63,20 @@ class _PostListState extends State<PostList> {
             }
             return ListView.builder(
               itemBuilder: (BuildContext context, int index) {
-                return index >= state.posts.length
+                return index >= state.fav.length
                     ? const BottomLoader()
-                    : PostListItem(
-                        post: state.posts[index],
+                    : PostListItemFav(
+                        post: state.fav[index],
                         postRepository: _postRepository,
                         user: _user,
                       );
               },
               scrollDirection: Axis.vertical,
-              itemCount: state.hasReachedMax
-                  ? state.posts.length
-                  : state.posts.length + 1,
+              itemCount:
+                  state.hasReachedMax ? state.fav.length : state.fav.length + 1,
               controller: _scrollController,
             );
-          case PostStatus.initial:
+          case FavStatus.initial:
             return const Center(child: CircularProgressIndicator());
         }
       },
@@ -93,7 +92,7 @@ class _PostListState extends State<PostList> {
   }
 
   void _onScroll() {
-    if (_isBottom) context.read<PostBloc>().add(PostFetched());
+    if (_isBottom) context.read<FavBloc>().add(FavFetched());
   }
 
   bool get _isBottom {
