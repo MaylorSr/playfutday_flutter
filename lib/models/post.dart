@@ -30,6 +30,7 @@ class Post {
   String? uploadDate;
   String? author;
   String? authorFile;
+  List<String>? likesByAuthor;
   int? countLikes;
   List<Commentaries>? commentaries;
 
@@ -41,6 +42,7 @@ class Post {
       this.uploadDate,
       this.author,
       this.authorFile,
+      this.likesByAuthor,
       this.countLikes,
       this.commentaries});
 
@@ -52,7 +54,9 @@ class Post {
     uploadDate = json['uploadDate'];
     author = json['author'];
     authorFile = json['authorFile'];
+    likesByAuthor = json['likesByAuthor'];
     countLikes = json['countLikes'];
+
     if (json['commentaries'] != null) {
       commentaries = <Commentaries>[];
       json['commentaries'].forEach((v) {
@@ -70,6 +74,7 @@ class Post {
     data['uploadDate'] = this.uploadDate;
     data['author'] = this.author;
     data['authorFile'] = this.authorFile;
+    data['likesByAuthor'] = this.likesByAuthor;
     data['countLikes'] = this.countLikes;
     if (this.commentaries != null) {
       data['commentaries'] = this.commentaries!.map((v) => v.toJson()).toList();

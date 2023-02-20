@@ -1,6 +1,7 @@
 // ignore_for_file: unused_local_variable
 
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:playfutday_flutter/models/favPost.dart';
@@ -55,8 +56,7 @@ class PostRepository {
     );
     print(response.statusCode);
 
-    return PostFav.fromJson(jsonDecode(response.body)).content
-        as List<Content>;
+    return PostFav.fromJson(jsonDecode(response.body)).content as List<Content>;
   }
 
   Future<Image> getImage(String imageName) async {
@@ -74,5 +74,17 @@ class PostRepository {
     } else {
       throw Exception('Failed to load image');
     }
+  }
+
+  Future<bool> postLikeByMe(int idPost) async {
+    String? token = _localStorageService.getFromDisk('user_token');
+    String urlLike = "/post/like/$idPost";
+
+    final response = await http.post(Uri.parse(url_base + urlLike),
+        headers: {'Authorization': 'Bearer $token'}, body: jsonEncode(idPost));
+    print('The status code of your peticion are:');
+    print(response.statusCode);
+    if (response.statusCode == 201) return true;
+    return false;
   }
 }

@@ -1,26 +1,26 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:playfutday_flutter/models/models.dart';
 import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
 
-import '../../services/authentication_service.dart';
-
 class LikeButton extends StatefulWidget {
-  const LikeButton({Key? key}) : super(key: key);
-
+  const LikeButton({Key? key, required this.idPost}) : super(key: key);
+  final int idPost;
   @override
   _LikeButtonState createState() => _LikeButtonState();
 }
 
 class _LikeButtonState extends State<LikeButton> {
   bool _isLiked = false;
-
+  final _postRepository = PostRepository();
+  final int idPost = 1;
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
         setState(() {
+          _postRepository.postLikeByMe(idPost);
           _isLiked = !_isLiked;
         });
       },
@@ -176,7 +176,9 @@ class PostListItem extends StatelessWidget {
                             fontWeight: FontWeight.w400),
                       ),
                       SizedBox(width: 8),
-                      LikeButton(),
+                      LikeButton(
+                        idPost: int.parse('${post.id}'),
+                      ),
                       SizedBox(width: 3),
                       SizedBox(width: 3),
                       Text(
