@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 import 'package:playfutday_flutter/models/userLogin.dart';
 
 import '../config/locator.dart';
+import '../models/post.dart';
 import '../models/user.dart';
 import '../rest/rest_client.dart';
 import 'package:http/http.dart' as http;
@@ -43,5 +44,6 @@ class UserRepository {
     print(response.statusCode);
     return UserLogin.fromJson(jsonDecode(response.body));
   }
-}
 
+
+}

@@ -17,3 +17,5 @@ class PostFailure extends PostState {
   @override
   List<Object> get props => [error];
 }
+
+class PostRefresh extends PostEvent {}

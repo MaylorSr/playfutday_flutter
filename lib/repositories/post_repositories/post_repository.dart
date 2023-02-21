@@ -40,6 +40,7 @@ class PostRepository {
     );
 
     print(response.statusCode);
+
     return PostResponse.fromJson(jsonDecode(response.body)).content
         as List<Post>;
   }
@@ -57,7 +58,6 @@ class PostRepository {
     );
     print(response.statusCode);
     print(response.body);
-
     return PostFav.fromJson(jsonDecode(response.body)).content as List<Content>;
   }
 
@@ -89,5 +89,22 @@ class PostRepository {
     print(response.body);
     if (response.statusCode == 201) return true;
     return false;
+  }
+
+  // ignore: no_leading_underscores_for_local_identifiers
+  Future<List<Post>> getMyPost([int _startIndex = -1]) async {
+// ignore: unnecessary_brace_in_string_interps, unused_local_variable
+    String page = "/post/user?page=${_startIndex}";
+
+    String? token = _localStorageService.getFromDisk('user_token');
+
+    final response = await http.get(
+      Uri.parse(url_base + page),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    print(response.statusCode);
+    return PostResponse.fromJson(jsonDecode(response.body)).content
+        as List<Post>;
   }
 }

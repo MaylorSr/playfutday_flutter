@@ -1,9 +1,8 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+// ignore_for_file: prefer_const_constructors
 
 import '../../blocs/photo/photo_bloc.dart';
 import '../../blocs/photo/route/route_nanme.dart';
@@ -73,21 +72,17 @@ class _NewPostState extends State<NewPost> {
                         context), // provide the local bloc instance
                     builder: (context, state) {
                       return Container(
-                        height: 150,
-                        width: 150,
+                        width: 50,
                         child: state is PhotoInitial
-                            ? Image.asset(
-                                'assets/images/user.png') // set a placeholder image when no photo is set
+                            ? Icon(
+                                Icons.camera_alt_outlined,
+                                size: 50,
+                              )
                             : Image.file((state as PhotoSet).photo),
                       );
                     },
                   ),
-                ),
-                SizedBox(height: 50),
-                Text(
-                  'Please select your profile photo',
-                  style: TextStyle(fontSize: 22),
-                ),
+                )
               ],
             ),
             Padding(
@@ -114,13 +109,13 @@ class _NewPostState extends State<NewPost> {
   }
 
   Future selectOrTakePhoto(ImageSource imageSource) async {
-    final pickedFile = await picker.getImage(source: imageSource);
+    final pickedFile = await picker.pickImage(source: imageSource);
 
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
-        Navigator.pushNamed(context as BuildContext, routeEdit,
-            arguments: _image);
+        // ignore: unnecessary_cast
+        Navigator.pushNamed(context, routeEdit, arguments: _image);
       } else
         print('No photo was selected or taken');
     });
@@ -130,21 +125,21 @@ class _NewPostState extends State<NewPost> {
   Future _showSelectionDialog() async {
     await showDialog(
       context: context,
-      child: SimpleDialog(
+      builder: (BuildContext context) => SimpleDialog(
         title: Text('Select photo'),
         children: <Widget>[
           SimpleDialogOption(
             child: Text('From gallery'),
             onPressed: () {
               selectOrTakePhoto(ImageSource.gallery);
-              Navigator.pop(context as BuildContext);
+              Navigator.pop(context);
             },
           ),
           SimpleDialogOption(
             child: Text('Take a photo'),
             onPressed: () {
               selectOrTakePhoto(ImageSource.camera);
-              Navigator.pop(context as BuildContext);
+              Navigator.pop(context);
             },
           ),
         ],

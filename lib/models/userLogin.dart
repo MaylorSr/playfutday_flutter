@@ -38,7 +38,7 @@ class UserLogin {
     if (json['myPost'] != null) {
       myPost = <MyPost>[];
       json['myPost'].forEach((v) {
-        myPost!.add(new MyPost.fromJson(v));
+        myPost!.add(MyPost.fromJson(v));
       });
     }
     roles = json['roles'].cast<String>();

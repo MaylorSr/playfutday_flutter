@@ -36,7 +36,7 @@ class _EditPhotoPageState extends State<EditPhotoPage> {
 
   Future<Null> _cropImage() async {
     //File croppedFile = await ImageCropper.cropImage(
-    CroppedFile? croppedFile = await ImageCropper().cropImage(
+    CroppedFile? croppedFile = await ImageCropper.platform.cropImage(
       sourcePath: imageFile.path,
       //aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
       uiSettings: [

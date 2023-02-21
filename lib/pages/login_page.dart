@@ -8,6 +8,10 @@ import '../blocs/authentication/authentication_state.dart';
 import '../blocs/login/login_bloc.dart';
 import '../blocs/login/login_event.dart';
 import '../blocs/login/login_state.dart';
+
+import '../blocs/register/register_bloc.dart';
+import '../blocs/register/register_event.dart';
+import '../blocs/register/register_state.dart';
 import '../config/locator.dart';
 import '../services/services.dart';
 
@@ -19,15 +23,6 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: NetworkImage(
-                      'https://w0.peakpx.com/wallpaper/635/286/HD-wallpaper-football-lovers-abo-trika-cadillacs-mbappe-messi-ramos-ronaldo-salah-totti.jpg'),
-                  fit: BoxFit.cover,
-                  repeat: ImageRepeat.noRepeat),
-            ),
-          ),
           SafeArea(
             minimum: const EdgeInsets.all(16),
             child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
@@ -93,11 +88,6 @@ class _SignInForm extends StatefulWidget {
   __SignInFormState createState() => __SignInFormState();
 }
 
-class _RegisterInForm extends StatefulWidget {
-  @override
-  __RegisterInFormState createState() => __RegisterInFormState();
-}
-
 class __SignInFormState extends State<_SignInForm> {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
   final _passwordController = TextEditingController();
@@ -146,29 +136,28 @@ class __SignInFormState extends State<_SignInForm> {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(),
-                        child: Image.network(
-                          'https://img.freepik.com/vector-premium/balon-futbol-estilo-dibujos-animados-aislado-fondo-blanco-balon-futbol-icono-deporte-juegos_566734-174.jpg',
-                          width: 200,
-                        ),
+                      Image.network(
+                        'https://img.freepik.com/vector-premium/balon-futbol-estilo-dibujos-animados-aislado-fondo-blanco-balon-futbol-icono-deporte-juegos_566734-174.jpg',
+                        width: 200,
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 60),
+                        padding: const EdgeInsets.only(top: 30),
                         child: Text(
                           'PLAYFUTDAY',
                           style: TextStyle(
-                              fontSize: 25,
-                              fontStyle: FontStyle.italic,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black),
+                            fontSize: 35,
+                            fontWeight: FontWeight.bold,
+                            fontStyle: FontStyle.italic,
+                            color: Color.fromARGB(255, 0, 0, 0),
+                          ),
                         ),
-                      )
+                      ),
                     ],
                   ),
+                  SizedBox(height: 30),
                   TextFormField(
                     decoration: InputDecoration(
-                      labelText: 'User Name',
+                      labelText: 'Username',
                       filled: true,
                       isDense: true,
                     ),
@@ -180,7 +169,6 @@ class __SignInFormState extends State<_SignInForm> {
                     height: 12,
                   ),
                   TextFormField(
-                    // ignore: prefer_const_constructors
                     decoration: InputDecoration(
                       labelText: 'Password',
                       filled: true,
@@ -190,7 +178,7 @@ class __SignInFormState extends State<_SignInForm> {
                     controller: _passwordController,
                     validator: (value) {
                       if (value == null) {
-                        return 'Password is required.';
+                        return '...';
                       }
                       return null;
                     },
@@ -198,25 +186,27 @@ class __SignInFormState extends State<_SignInForm> {
                   const SizedBox(
                     height: 16,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueAccent),
-                      child: Text('REGISTER'),
-                      onPressed: () => {},
-                    ),
-                  ),
+                  TextButton(
+                      child: Text(
+                        '¿You do not have count? Register now',
+                        style: TextStyle(color: Colors.brown),
+                      ),
+                      onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => _RegisterInForm(),
+                            ),
+                          )),
                   Padding(
                       padding: const EdgeInsets.only(top: 10),
                       child: ElevatedButton(
-                        // color: Theme.of(context).primaryColor,
-                        //textColor: Colors.white,
-                        //padding: const EdgeInsets.all(16),
-                        // ignore: sort_child_properties_last
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blueAccent),
-                        child: Text('LOG IN'),
+                          backgroundColor: Colors.blueAccent,
+                        ),
+                        // ignore: sort_child_properties_last
+                        child: state is LoginLoading
+                            ? CircularProgressIndicator()
+                            : Text('LOGIN'),
                         onPressed: state is LoginLoading
                             ? () {}
                             : _onLoginButtonPressed,
@@ -231,51 +221,164 @@ class __SignInFormState extends State<_SignInForm> {
   }
 
   Future<void> _showError(String error) async {
-    /*
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('AlertDialog Title'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text('This is a demo alert dialog.'),
-                Text('Would you like to approve of this message?'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Approve'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-*/
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(
         error,
         style: TextStyle(
-            color: Color.fromARGB(255, 117, 19, 12),
+            color: Color.fromARGB(255, 247, 247, 247),
             fontSize: 20,
             fontWeight: FontWeight.bold),
         textAlign: TextAlign.center,
       ),
-      backgroundColor: Color.fromARGB(255, 83, 117, 139),
+      backgroundColor: Color.fromARGB(255, 6, 12, 100),
     ));
   }
 }
 
-class __RegisterInFormState extends State<_RegisterInForm> {
+class _RegisterInForm extends StatelessWidget {
+  final _passwordController = TextEditingController();
+  final _usernameController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
+    return Form(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 30),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.network(
+                    'https://img.freepik.com/vector-premium/balon-futbol-estilo-dibujos-animados-aislado-fondo-blanco-balon-futbol-icono-deporte-juegos_566734-174.jpg',
+                    width: 200,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30),
+                    child: Text(
+                      'PLAYFUTDAY',
+                      style: TextStyle(
+                        fontSize: 35,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                        color: Color.fromARGB(255, 0, 0, 0),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 30),
+            TextFormField(
+              decoration: InputDecoration(
+                labelText: 'Username',
+                filled: true,
+                isDense: true,
+              ),
+              controller: _usernameController,
+              keyboardType: TextInputType.text,
+              autocorrect: false,
+            ),
+            SizedBox(
+              height: 12,
+            ),
+            TextFormField(
+              decoration: InputDecoration(
+                labelText: 'Password',
+                filled: true,
+                isDense: true,
+              ),
+              obscureText: true,
+              controller: _passwordController,
+              validator: (value) {
+                if (value == null) {
+                  return 'Password is required';
+                }
+                return null;
+              },
+            ),
+            SizedBox(
+              height: 12,
+            ),
+            TextFormField(
+              decoration: InputDecoration(
+                labelText: 'Confirm password',
+                filled: true,
+                isDense: true,
+              ),
+              obscureText: true,
+              controller: _confirmPasswordController,
+              validator: (value) {
+                if (value == null) {
+                  return 'Confirm password is required';
+                }
+                if (value != _passwordController.text) {
+                  return 'Passwords do not match';
+                }
+                return null;
+              },
+            ),
+            SizedBox(
+              height: 12,
+            ),
+            TextFormField(
+              decoration: InputDecoration(
+                labelText: 'Email',
+                filled: true,
+                isDense: true,
+              ),
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              autocorrect: false,
+              validator: (value) {
+                if (value == null) {
+                  return 'Email is required';
+                }
+                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                    .hasMatch(value)) {
+                  return 'Enter a valid email';
+                }
+                return null;
+              },
+            ),
+            SizedBox(
+              height: 12,
+            ),
+            TextFormField(
+              decoration: InputDecoration(
+                labelText: 'Phone',
+                filled: true,
+                isDense: true,
+              ),
+              controller: _phoneController,
+              keyboardType: TextInputType.phone,
+              autocorrect: false,
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            TextButton(
+              child: Text(
+                '¿Ya tienes cuenta? Inicia sesión',
+                style: TextStyle(color: Colors.brown),
+              ),
+              onPressed: () => Navigator.pop(context),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: ElevatedButton(
+                onPressed: () {},
+                child: Text('Registrarse'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

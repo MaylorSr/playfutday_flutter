@@ -52,7 +52,7 @@ class User {
     data['phone'] = this.phone;
     data['birthday'] = this.birthday;
     if (this.myPost != null) {
-      data['myPost'] = this.myPost!.map((v) => v.toJson()).toList();
+      data['myPost'] = myPost!.map((v) => v.toJson()).toList();
     }
     data['roles'] = this.roles;
     data['token'] = this.token;
@@ -131,18 +131,33 @@ class UserCommentaries {
 }
 
 class UserResponse extends User {
-  UserResponse(username, avatar, toke) : super();
-
+  UserResponse(
+      username, avatar, token, email, biography, phone, birthday, myPost, roles)
+      : super();
   UserResponse.fromJson(Map<String, dynamic> json) {
     username = json['username'];
+    email = json['email'];
+    biography = json['biography'];
+    phone = json['phone'];
+    birthday = json[
+        'birthday']; /*
+    myPost = json['myPost'];
+    roles = json['roles'];*/
     avatar = json['avatar'];
     token = json['token'];
   }
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['username'] = username;
+    data['email'] = email;
+    data['phone'] = phone;
+    data['biography'] = biography;
+    data['birthday'] =
+        birthday; /*
+    data['myPost'] = myPost;
+    data['roles'] = roles;*/
     data['avatar'] = avatar;
-    data['toke'] = token;
+    data['token'] = token;
     return data;
   }
 }

@@ -92,7 +92,7 @@ class PostListItem extends StatelessWidget {
                   ),
                 ),
                 Visibility(
-                  visible: '${post.author}' != '${'user.username'}',
+                  visible: '${post.author}' != '${user.username}',
                   child: Row(
                     // ignore: prefer_const_literals_to_create_immutables
                     children: [

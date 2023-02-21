@@ -1,14 +1,13 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:playfutday_flutter/models/favPost.dart';
 import 'package:playfutday_flutter/models/models.dart';
 import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
 
 import '../../services/authentication_service.dart';
 
 class PostListItemFav extends StatelessWidget {
-  PostListItemFav({
+  const PostListItemFav({
     Key? key,
     required this.post,
     required this.postRepository,
@@ -17,7 +16,6 @@ class PostListItemFav extends StatelessWidget {
 
   final Content post;
   final PostRepository postRepository;
-  final AuthenticationService _authService = JwtAuthenticationService();
   @override
   Widget build(BuildContext context) {
     return Padding(

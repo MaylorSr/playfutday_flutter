@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:playfutday_flutter/blocs/export.dart';
@@ -19,6 +21,7 @@ class _PostListState extends State<PostList> {
   final _scrollController = ScrollController();
   final _postRepository = PostRepository();
   final _user = User();
+  final _refreshController = Completer<void>(); // Add this line to define the _refreshController
 
   @override
   void initState() {
@@ -26,7 +29,7 @@ class _PostListState extends State<PostList> {
     _scrollController.addListener(_onScroll);
   }
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PostBloc, PostState>(
       builder: (context, state) {
@@ -36,47 +39,38 @@ class _PostListState extends State<PostList> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Center(child: Text('failed to get posts!')),
-                ElevatedButton(
-                  onPressed: () {
-                    context.read<PostBloc>().add(ResetCounter());
-                    context.read<PostBloc>().add(PostFetched());
-                  },
-                  child: const Text('Try Again'),
-                ),
               ],
             );
-
           case PostStatus.success:
             if (state.posts.isEmpty) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Center(child: Text('Any posts found!')),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<PostBloc>().add(ResetCounter());
-                      context.read<PostBloc>().add(PostFetched());
-                    },
-                    child: const Text('Try Again'),
-                  ),
                 ],
               );
             }
-            return ListView.builder(
-              itemBuilder: (BuildContext context, int index) {
-                return index >= state.posts.length
-                    ? const BottomLoader()
-                    : PostListItem(
-                        post: state.posts[index],
-                        postRepository: _postRepository,
-                        user: _user,
-                      );
+            return RefreshIndicator(
+              onRefresh: () async {
+                context.read<PostBloc>().add(PostRefresh());
+                await _refreshController.future;
               },
-              scrollDirection: Axis.vertical,
-              itemCount: state.hasReachedMax
-                  ? state.posts.length
-                  : state.posts.length + 1,
-              controller: _scrollController,
+              child: ListView.builder(
+                itemBuilder: (BuildContext context, int index) {
+                  return index >= state.posts.length
+                      ? const BottomLoader()
+                      : PostListItem(
+                          post: state.posts[index],
+                          postRepository: _postRepository,
+                          user: _user,
+                        );
+                },
+                scrollDirection: Axis.vertical,
+                itemCount: state.hasReachedMax
+                    ? state.posts.length
+                    : state.posts.length + 1,
+                controller: _scrollController,
+              ),
             );
           case PostStatus.initial:
             return const Center(child: CircularProgressIndicator());
@@ -84,6 +78,7 @@ class _PostListState extends State<PostList> {
       },
     );
   }
+
 
   @override
   void dispose() {
