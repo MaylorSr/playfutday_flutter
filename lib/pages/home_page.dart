@@ -18,6 +18,7 @@ import '../models/models.dart';
 import '../models/user.dart';
 import 'fav/post_pageFav.dart';
 import 'login_page.dart';
+import 'myPost/myPost_page.dart';
 
 class HomePage extends StatefulWidget {
   final PostRepository postRepository;
@@ -175,7 +176,6 @@ class _HomePageState extends State<HomePage> {
                   }
                 },
               );
-
             default:
               return Container();
           }

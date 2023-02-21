@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_literals_to_create_immutables
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -21,7 +23,8 @@ class _PostListState extends State<PostList> {
   final _scrollController = ScrollController();
   final _postRepository = PostRepository();
   final _user = User();
-  final _refreshController = Completer<void>(); // Add this line to define the _refreshController
+  final _refreshController =
+      Completer<void>(); // Add this line to define the _refreshController
 
   @override
   void initState() {
@@ -29,7 +32,7 @@ class _PostListState extends State<PostList> {
     _scrollController.addListener(_onScroll);
   }
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<PostBloc, PostState>(
       builder: (context, state) {
@@ -78,7 +81,6 @@ class _PostListState extends State<PostList> {
       },
     );
   }
-
 
   @override
   void dispose() {

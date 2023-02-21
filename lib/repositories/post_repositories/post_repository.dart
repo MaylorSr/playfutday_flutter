@@ -1,7 +1,9 @@
-// ignore_for_file: unused_local_variable
+// ignore_for_file: unused_local_variable, unnecessary_cast
 
 import 'dart:convert';
 import 'dart:ffi';
+import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:playfutday_flutter/models/favPost.dart';
@@ -103,8 +105,26 @@ class PostRepository {
       headers: {'Authorization': 'Bearer $token'},
     );
 
+    // ignore: avoid_print
     print(response.statusCode);
     return PostResponse.fromJson(jsonDecode(response.body)).content
         as List<Post>;
+  }
+
+  Future<dynamic> sendCommentaries(String message, int idPost) async {
+    String? token = _localStorageService.getFromDisk('user_token');
+
+    String urlPostToCommentaries = "/post/commentary/$idPost";
+    final response =
+        await http.post(Uri.parse(url_base + urlPostToCommentaries),
+            headers: {
+              'Authorization': 'Bearer $token',
+              'Content-Type': 'application/json',
+              'Accept': 'application/json, text/plain'
+            },
+            body: jsonEncode({'message': message}));
+    print(response.body);
+    if (response.statusCode == 201) return true;
+    return false;
   }
 }

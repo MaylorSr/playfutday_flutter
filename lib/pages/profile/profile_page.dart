@@ -2,10 +2,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:playfutday_flutter/blocs/myPost/myPost_event.dart';
+import 'package:playfutday_flutter/pages/myPost/myPost_list.dart';
+import 'package:playfutday_flutter/pages/myPost/myPost_page.dart';
 import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
 
 import '../../blocs/authentication/authentication_bloc.dart';
 import '../../blocs/authentication/authentication_event.dart';
+import '../../blocs/myPost/myPost_bloc.dart';
 import '../../models/user.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -116,7 +120,8 @@ class ProfileScreen extends StatelessWidget {
                 ],
               ),
             ),
-          ),Container(
+          ),
+          Container(
             padding: EdgeInsets.symmetric(horizontal: 10.0),
             child: Align(
               alignment: Alignment.centerLeft,
@@ -147,11 +152,10 @@ class ProfileScreen extends StatelessWidget {
             child: Text(
               '${user.birthday ?? ''}',
               style: TextStyle(
-                fontSize: 16.0,
-                fontStyle: FontStyle.italic,
-                fontWeight: FontWeight.bold,
-                color: Colors.blueGrey
-              ),
+                  fontSize: 16.0,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueGrey),
             ),
           ),
           ElevatedButton(
@@ -164,39 +168,14 @@ class ProfileScreen extends StatelessWidget {
               authBloc.add(UserLoggedOut());
             },
           ),
-          Divider(), /*
+          Divider(),/*
           Expanded(
-            child: GridView.count(
-              crossAxisCount: 3,
-              children: List.generate(19, (index) {
-                return Container(
-                  margin: EdgeInsets.all(2.0),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(
-                          'https://picsum.photos/200?random=${index + 1}'),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                );
-              }),
-            ),
-          ),*/
+              child: BlocProvider(
+            create: (context) => MyPostBloc(),
+            child: PostPage(),
+          )),*/
         ],
       ),
     );
   }
 }
-/*const SizedBox(
-                height: 12,
-              ),
-              ElevatedButton(
-                //textColor: Theme.of(context).primaryColor,
-                /*style: TextButton.styleFrom(
-                  primary: Theme.of(context).primaryColor,
-                ),*/
-                child: Text('Logout'),
-                onPressed: (){
-                  authBloc.add(UserLoggedOut());
-                },
-              ),*/

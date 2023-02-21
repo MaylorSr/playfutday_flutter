@@ -1,7 +1,7 @@
 class PostResponse {
-  List<Post>? content;
-
-  PostResponse({this.content});
+  late final List<Post> content;
+  late final int totalPages;
+  PostResponse({required this.content, required this.totalPages});
 
   PostResponse.fromJson(Map<String, dynamic> json) {
     if (json['content'] != null) {
@@ -10,6 +10,7 @@ class PostResponse {
         // ignore: unnecessary_new
         content!.add(new Post.fromJson(v));
       });
+      totalPages = json['totalPages'];
     }
   }
 
@@ -18,6 +19,8 @@ class PostResponse {
     if (this.content != null) {
       data['content'] = this.content!.map((v) => v.toJson()).toList();
     }
+    data['totalPages'] = this.totalPages;
+
     return data;
   }
 }
@@ -88,7 +91,7 @@ class Commentaries {
   String? authorName;
   String? uploadCommentary;
 
-  Commentaries({this.message, this.authorName, this.uploadCommentary});
+  Commentaries(int? id, {this.message, this.authorName, this.uploadCommentary});
 
   Commentaries.fromJson(Map<String, dynamic> json) {
     message = json['message'];

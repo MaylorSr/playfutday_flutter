@@ -1,8 +1,8 @@
 // ignore_for_file: prefer_const_constructors, library_private_types_in_public_api
 
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart';
 import 'package:playfutday_flutter/models/models.dart';
 import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
 
@@ -46,7 +46,9 @@ class PostListItem extends StatelessWidget {
   final Post post;
   final PostRepository postRepository;
 
+  // ignore: unused_field
   final bool _isLiked = false;
+  // ignore: no_leading_underscores_for_local_identifiers, unused_element
 
   @override
   Widget build(BuildContext context) {
@@ -193,7 +195,16 @@ class PostListItem extends StatelessWidget {
                       ),
                       SizedBox(width: 16),
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CommentDialog(
+                                  post: post, postRepository: PostRepository()),
+                              fullscreenDialog: true,
+                            ),
+                          );
+                        },
                         child: Icon(
                           Icons.chat_bubble_outline,
                           size: 28,
@@ -219,6 +230,124 @@ class PostListItem extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class CommentDialog extends StatefulWidget {
+  final Post post;
+  final PostRepository postRepository;
+
+  const CommentDialog({required this.post, required this.postRepository});
+
+  @override
+  _CommentDialogState createState() => _CommentDialogState();
+}
+
+class _CommentDialogState extends State<CommentDialog> {
+  final TextEditingController _commentController = TextEditingController();
+  final postRepository = PostRepository();
+  _addComment(_commentController, int idPost) {
+    postRepository.sendCommentaries(_commentController, idPost);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        FutureBuilder<Image>(
+          future: postRepository.getImage('${widget.post.image}'),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Image(
+                image: snapshot.data!.image,
+                width: 600,
+                height: 800,
+              );
+            } else if (snapshot.hasError) {
+              return Text('${snapshot.error}');
+            } else {
+              return CircularProgressIndicator();
+            }
+          },
+        ),
+        Dialog(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Comentaries',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('${widget.post.author}'),
+              ),
+              Divider(),
+              if (widget.post.commentaries != null &&
+                  widget.post.commentaries!.isNotEmpty)
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: widget.post.commentaries!.length,
+                    itemBuilder: (context, index) {
+                      final comment = widget.post.commentaries![index];
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Card(
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              child: Text('${comment.authorName?[0]}'),
+                            ),
+                            title: Text('${comment.message}'),
+                            subtitle: Text('${comment.uploadCommentary}'),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              Text('No hay comentarios.'),
+              Divider(),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: _commentController,
+                  decoration: InputDecoration(
+                    hintText: 'Write your commentarie',
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Back'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      _addComment(_commentController.text,
+                          int.parse('${widget.post.id}'));
+                      _commentController.clear();
+                      Navigator.pop(context);
+                    },
+                    child: Text('Send'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
