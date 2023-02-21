@@ -1,32 +1,33 @@
 class RegisterRequest {
   String? username;
-  String? password;
-  String? veryfyPassword;
   String? email;
   String? phone;
+  String? password;
+  String? verifyPassword;
 
-  RegisterRequest(
-      {this.username,
-      this.password,
-      this.veryfyPassword,
-      this.email,
-      this.phone});
+  RegisterRequest({
+    this.username,
+    this.email,
+    this.phone,
+    this.password,
+    this.verifyPassword,
+  });
 
   RegisterRequest.fromJson(Map<String, dynamic> json) {
     username = json['username'];
-    password = json['password'];
-    veryfyPassword = json['veryfyPassword'];
     email = json['email'];
     phone = json['phone'];
+    password = json['password'];
+    verifyPassword = json['verifyPassword'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['username'] = username;
-    data['password'] = password;
-    data['veryfyPassword'] = veryfyPassword;
     data['email'] = email;
     data['phone'] = phone;
+    data['password'] = password;
+    data['verifyPassword'] = verifyPassword;
     return data;
   }
 }

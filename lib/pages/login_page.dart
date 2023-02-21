@@ -1,17 +1,17 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:playfutday_flutter/repositories/register_repositories/register_repositoy.dart';
+import 'package:playfutday_flutter/repositories/user_repository.dart';
 import '../blocs/authentication/authentication_bloc.dart';
 import '../blocs/authentication/authentication_event.dart';
 import '../blocs/authentication/authentication_state.dart';
 import '../blocs/login/login_bloc.dart';
 import '../blocs/login/login_event.dart';
 import '../blocs/login/login_state.dart';
-
-import '../blocs/register/register_bloc.dart';
-import '../blocs/register/register_event.dart';
-import '../blocs/register/register_state.dart';
+import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import '../config/locator.dart';
 import '../services/services.dart';
 
@@ -194,7 +194,8 @@ class __SignInFormState extends State<_SignInForm> {
                       onPressed: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => _RegisterInForm(),
+                              builder: (context) => RegisterForm(
+                                  registerRepository: RegisterRepository()),
                             ),
                           )),
                   Padding(
@@ -235,148 +236,247 @@ class __SignInFormState extends State<_SignInForm> {
   }
 }
 
-class _RegisterInForm extends StatelessWidget {
-  final _passwordController = TextEditingController();
-  final _usernameController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
+class RegisterFormBloc extends FormBloc<String, String> {
+  final email = TextFieldBloc(
+    validators: [
+      FieldBlocValidators.required,
+      FieldBlocValidators.email,
+    ],
+  );
+
+  final username = TextFieldBloc(
+    validators: [
+      FieldBlocValidators.required,
+    ],
+  );
+
+  final phone = TextFieldBloc(
+    validators: [
+      FieldBlocValidators.required,
+      (value) {
+        if (value.isEmpty) {
+          return 'Please, put a number phone';
+        } else if (value.length != 9 || !RegExp(r'^\d{9}$').hasMatch(value)) {
+          return 'The number phone must have 9 digits!';
+        }
+      },
+    ],
+  );
+
+  final password = TextFieldBloc(
+    validators: [
+      FieldBlocValidators.required,
+    ],
+  );
+
+  final varifyPassword = TextFieldBloc(validators: [
+    FieldBlocValidators.required,
+  ]);
+
+  final showSuccessResponse = BooleanFieldBloc();
+
+  RegisterFormBloc() {
+    addFieldBlocs(
+      fieldBlocs: [
+        email,
+        username,
+        phone,
+        password,
+        varifyPassword,
+        showSuccessResponse,
+      ],
+    );
+  }
+
+  @override
+  void onSubmitting() async {
+    debugPrint(email.value);
+    debugPrint(username.value);
+    debugPrint(phone.value);
+    debugPrint(password.value);
+    debugPrint(varifyPassword.value);
+    debugPrint(showSuccessResponse.value.toString());
+
+    RegisterRepository().doRegister(username.value, email.value, phone.value,
+        password.value, varifyPassword.value);
+    await Future<void>.delayed(const Duration(seconds: 2));
+
+    final response = await RegisterRepository().doRegister(username.value,
+        email.value, phone.value, password.value, varifyPassword.value);
+
+    if (response.statusCode != 400 ) {
+      emitSuccess();
+    } else {
+      if (response.statusCode == 400) {
+        final errorJson = json.decode(response.body);
+        final subErrors = errorJson['subErrors'] ?? [];
+        final errorMessages = subErrors.map((e) => e['message']).toList();
+        final errorMessage = 'Validation error: ${errorMessages.join(', ')}';
+        emitFailure(failureResponse: errorMessage);
+      }
+    }
+  }
+}
+
+class RegisterForm extends StatelessWidget {
+  const RegisterForm({Key? key, required this.registerRepository})
+      : super(key: key);
+  final RegisterRepository registerRepository;
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 30),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.network(
-                    'https://img.freepik.com/vector-premium/balon-futbol-estilo-dibujos-animados-aislado-fondo-blanco-balon-futbol-icono-deporte-juegos_566734-174.jpg',
-                    width: 200,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 30),
-                    child: Text(
-                      'PLAYFUTDAY',
-                      style: TextStyle(
-                        fontSize: 35,
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.italic,
-                        color: Color.fromARGB(255, 0, 0, 0),
-                      ),
+    return BlocProvider(
+      create: (context) => RegisterFormBloc(),
+      child: Builder(
+        builder: (context) {
+          final regFormBloc = context.read<RegisterFormBloc>();
+
+          return Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: AppBar(
+              title: const Text('Register'),
+              backgroundColor: Colors.green,
+            ),
+            body: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: FormBlocListener<RegisterFormBloc, String, String>(
+                onSubmitting: (context, state) {
+                  LoadingDialog.show(context);
+                },
+                onSubmissionFailed: (context, state) {
+                  LoadingDialog.hide(context);
+                },
+                onSuccess: (context, state) {
+                  LoadingDialog.hide(context);
+
+                  Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (_) => const LoginPage()));
+                },
+                onFailure: (context, state) {
+                  LoadingDialog.hide(context);
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.failureResponse!)));
+                },
+                child: SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(),
+                  child: AutofillGroup(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        const SizedBox(height: 40.0),
+                        TextFieldBlocBuilder(
+                          textFieldBloc: regFormBloc.email,
+                          keyboardType: TextInputType.emailAddress,
+                          autofillHints: const [
+                            AutofillHints.username,
+                          ],
+                          decoration: InputDecoration(
+                            labelText: 'Email',
+                            prefixIcon:
+                                const Icon(Icons.email, color: Colors.green),
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 20.0),
+                        TextFieldBlocBuilder(
+                          textFieldBloc: regFormBloc.username,
+                          keyboardType: TextInputType.name,
+                          autofillHints: const [
+                            AutofillHints.username,
+                          ],
+                          decoration: InputDecoration(
+                            labelText: 'Username',
+                            prefixIcon:
+                                const Icon(Icons.person, color: Colors.green),
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 20.0),
+                        TextFieldBlocBuilder(
+                          textFieldBloc: regFormBloc.phone,
+                          keyboardType: TextInputType.phone,
+                          autofillHints: const [
+                            AutofillHints.username,
+                          ],
+                          decoration: InputDecoration(
+                            labelText: 'Phone',
+                            prefixIcon:
+                                const Icon(Icons.phone, color: Colors.green),
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 20.0),
+                        TextFieldBlocBuilder(
+                          textFieldBloc: regFormBloc.password,
+                          suffixButton: SuffixButton.obscureText,
+                          autofillHints: const [AutofillHints.password],
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            prefixIcon:
+                                const Icon(Icons.lock, color: Colors.green),
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 20.0),
+                        TextFieldBlocBuilder(
+                          textFieldBloc: regFormBloc.varifyPassword,
+                          suffixButton: SuffixButton.obscureText,
+                          autofillHints: const [AutofillHints.password],
+                          decoration: InputDecoration(
+                            labelText: 'Verify Password',
+                            prefixIcon:
+                                const Icon(Icons.lock, color: Colors.green),
+                            filled: true,
+                            fillColor: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 20.0),
+                        ElevatedButton(
+                          onPressed: regFormBloc.submit,
+                          child: const Text('Register'),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
             ),
-            SizedBox(height: 30),
-            TextFormField(
-              decoration: InputDecoration(
-                labelText: 'Username',
-                filled: true,
-                isDense: true,
-              ),
-              controller: _usernameController,
-              keyboardType: TextInputType.text,
-              autocorrect: false,
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            TextFormField(
-              decoration: InputDecoration(
-                labelText: 'Password',
-                filled: true,
-                isDense: true,
-              ),
-              obscureText: true,
-              controller: _passwordController,
-              validator: (value) {
-                if (value == null) {
-                  return 'Password is required';
-                }
-                return null;
-              },
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            TextFormField(
-              decoration: InputDecoration(
-                labelText: 'Confirm password',
-                filled: true,
-                isDense: true,
-              ),
-              obscureText: true,
-              controller: _confirmPasswordController,
-              validator: (value) {
-                if (value == null) {
-                  return 'Confirm password is required';
-                }
-                if (value != _passwordController.text) {
-                  return 'Passwords do not match';
-                }
-                return null;
-              },
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            TextFormField(
-              decoration: InputDecoration(
-                labelText: 'Email',
-                filled: true,
-                isDense: true,
-              ),
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              autocorrect: false,
-              validator: (value) {
-                if (value == null) {
-                  return 'Email is required';
-                }
-                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                    .hasMatch(value)) {
-                  return 'Enter a valid email';
-                }
-                return null;
-              },
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            TextFormField(
-              decoration: InputDecoration(
-                labelText: 'Phone',
-                filled: true,
-                isDense: true,
-              ),
-              controller: _phoneController,
-              keyboardType: TextInputType.phone,
-              autocorrect: false,
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            TextButton(
-              child: Text(
-                '¿Ya tienes cuenta? Inicia sesión',
-                style: TextStyle(color: Colors.brown),
-              ),
-              onPressed: () => Navigator.pop(context),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 12),
-              child: ElevatedButton(
-                onPressed: () {},
-                child: Text('Registrarse'),
-              ),
-            ),
-          ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class LoadingDialog extends StatelessWidget {
+  static void show(BuildContext context, {Key? key}) => showDialog<void>(
+        context: context,
+        useRootNavigator: false,
+        barrierDismissible: false,
+        builder: (_) => LoadingDialog(key: key),
+      ).then((_) => FocusScope.of(context).requestFocus(FocusNode()));
+
+  static void hide(BuildContext context) => Navigator.pop(context);
+
+  const LoadingDialog({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Center(
+        child: Card(
+          child: Container(
+            width: 80,
+            height: 80,
+            padding: const EdgeInsets.all(12.0),
+            child: const CircularProgressIndicator(),
+          ),
         ),
       ),
     );
