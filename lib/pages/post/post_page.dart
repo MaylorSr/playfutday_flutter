@@ -12,8 +12,7 @@ import 'package:playfutday_flutter/repositories/post_repositories/post_repositor
 import 'bottom_loader.dart';
 
 class PostList extends StatefulWidget {
-const PostList({Key? key, required this.user}) : super(key: key);
-
+  const PostList({Key? key, required this.user}) : super(key: key);
 
   final User user;
 
@@ -26,7 +25,6 @@ class _PostListState extends State<PostList> {
   final _postRepository = PostRepository();
   final _refreshController =
       Completer<void>(); // Add this line to define the _refreshController
-
   @override
   void initState() {
     super.initState();
@@ -39,6 +37,7 @@ class _PostListState extends State<PostList> {
       builder: (context, state) {
         switch (state.status) {
           case PostStatus.failure:
+            // ignore: prefer_const_constructors
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -47,6 +46,7 @@ class _PostListState extends State<PostList> {
             );
           case PostStatus.success:
             if (state.posts.isEmpty) {
+              // ignore: prefer_const_constructors
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -67,6 +67,7 @@ class _PostListState extends State<PostList> {
                           post: state.posts[index],
                           postRepository: _postRepository,
                           user: widget.user,
+                          likeCount: 0,
                         );
                 },
                 scrollDirection: Axis.vertical,

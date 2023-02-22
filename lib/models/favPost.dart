@@ -1,5 +1,6 @@
 class PostFav {
   List<Content>? content;
+  late final int totalPages;
 
   PostFav({this.content});
 
@@ -9,6 +10,7 @@ class PostFav {
       json['content'].forEach((v) {
         content!.add(new Content.fromJson(v));
       });
+      totalPages = json['totalPages'];
     }
   }
 
@@ -17,6 +19,7 @@ class PostFav {
     if (this.content != null) {
       data['content'] = this.content!.map((v) => v.toJson()).toList();
     }
+    data['totalPages'] = this.totalPages;
     return data;
   }
 }

@@ -1,22 +1,33 @@
 // ignore_for_file: prefer_const_constructors, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:http/http.dart';
 import 'package:playfutday_flutter/models/models.dart';
 import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
 
+
 class LikeButton extends StatefulWidget {
-  const LikeButton({Key? key, required this.idPost}) : super(key: key);
-  final int idPost;
+  const LikeButton({Key? key, required this.idPost, required this.likeCount})
+      : super(key: key);
+  final int idPost;  
+  final int likeCount;
+
   @override
   _LikeButtonState createState() => _LikeButtonState();
 }
 
 class _LikeButtonState extends State<LikeButton> {
   bool _isLiked = false;
+  // ignore: unused_field
+  int _likeCount = 0;
   final _postRepository = PostRepository();
   final int idPost = 1;
+
+   @override
+  void initState() {
+    super.initState();
+    _likeCount = widget.likeCount;
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -24,6 +35,7 @@ class _LikeButtonState extends State<LikeButton> {
         setState(() {
           _postRepository.postLikeByMe(widget.idPost);
           _isLiked = !_isLiked;
+          _likeCount += _isLiked ? 1 : -1;
         });
       },
       child: Icon(
@@ -40,7 +52,7 @@ class PostListItem extends StatelessWidget {
     Key? key,
     required this.post,
     required this.postRepository,
-    required this.user,
+    required this.user, required this.likeCount,
   }) : super(key: key);
 
   final Post post;
@@ -48,6 +60,9 @@ class PostListItem extends StatelessWidget {
 
   // ignore: unused_field
   final bool _isLiked = false;
+  final int likeCount;
+  final int idPost = 1;
+
   // ignore: no_leading_underscores_for_local_identifiers, unused_element
 
   @override
@@ -94,7 +109,8 @@ class PostListItem extends StatelessWidget {
                   ),
                 ),
                 Visibility(
-                    visible: user.roles?.contains('ADMIN') ?? false || user.username == post.author,
+                  visible: user.roles?.contains('ADMIN') ??
+                      false || post.author != user.username ?? true,
                   child: Row(
                     children: [
                       IconButton(
@@ -213,16 +229,17 @@ class PostListItem extends StatelessWidget {
                       SizedBox(width: 8),
                       LikeButton(
                         idPost: int.parse('${post.id}'),
+                        likeCount:
+                            likeCount, // pass the `likeCount` value to the child widget
                       ),
                       SizedBox(width: 3),
-                      SizedBox(width: 3),
-                      Text(
-                        '${post.countLikes}',
+                      /*Text(
+                        (post.countLikes! + 1).toString(),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
                         ),
-                      ),
+                      ),*/
                       SizedBox(width: 16),
                       InkWell(
                         onTap: () {

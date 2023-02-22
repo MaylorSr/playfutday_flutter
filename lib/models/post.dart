@@ -59,7 +59,6 @@ class Post {
     uploadDate = json['uploadDate'];
     author = json['author'];
     idAuthor = json['idAuthor'];
-
     authorFile = json['authorFile'];
     likesByAuthor = json['likesByAuthor'];
     countLikes = json['countLikes'];
@@ -81,10 +80,9 @@ class Post {
     data['uploadDate'] = this.uploadDate;
     data['author'] = this.author;
     data['idAuthor'] = this.idAuthor;
-
     data['authorFile'] = this.authorFile;
     data['likesByAuthor'] = this.likesByAuthor;
-    data['countLikes'] = this.countLikes;
+    data['countLikes'] = countLikes;
     if (this.commentaries != null) {
       data['commentaries'] = this.commentaries!.map((v) => v.toJson()).toList();
     }

@@ -1,12 +1,8 @@
 // ignore_for_file: unused_local_variable, unnecessary_cast
 
 import 'dart:convert';
-import 'dart:ffi';
-import 'dart:io';
-import 'dart:math';
 import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
-import 'package:playfutday_flutter/models/favPost.dart';
 import 'package:playfutday_flutter/models/models.dart';
 import 'package:playfutday_flutter/services/services.dart';
 
