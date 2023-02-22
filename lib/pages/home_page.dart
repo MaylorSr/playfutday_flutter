@@ -143,7 +143,7 @@ class _HomePageState extends State<HomePage> {
                   onGenerateRoute: RouteGenerator.generateRoute,
                 ),
               );
-            case 3:
+            /*case 3:
               return Scaffold(
                   appBar: AppBar(
                     backgroundColor: Colors.white,
@@ -158,7 +158,7 @@ class _HomePageState extends State<HomePage> {
                     create: (_) =>
                         FavBloc(widget.postRepository)..add(FavFetched()),
                     child: PostListFav(),
-                  ));
+                  ));*/
             case 4:
               return BlocBuilder<AuthenticationBloc, AuthenticationState>(
                 builder: (context, state) {

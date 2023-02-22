@@ -1,9 +1,8 @@
-// ignore: file_names
 class PostFavResponse {
   List<MyFavPost>? content;
-  late final int totalPages;
+  late int totalPages;
 
-  PostFavResponse({this.content});
+  PostFavResponse({this.content, required this.totalPages});
 
   PostFavResponse.fromJson(Map<String, dynamic> json) {
     if (json['content'] != null) {
@@ -18,9 +17,9 @@ class PostFavResponse {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.content != null) {
-      data['content'] = this.content!.map((v) => v.toJson()).toList();
+      data['content'] = content!.map((v) => v.toJson()).toList();
     }
-    data['totalPages'] = this.totalPages;
+    data['totalPages'] = totalPages;
     return data;
   }
 }

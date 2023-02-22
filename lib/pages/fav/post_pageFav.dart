@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:playfutday_flutter/models/models.dart';
 import 'package:playfutday_flutter/pages/fav/post_listFav.dart';
@@ -45,14 +45,13 @@ class _PostListFavState extends State<PostListFav> {
               ],
             );
           case FavStatus.success:
-            if (state.fav.isEmpty) {
+            if (state.favPosts.isEmpty) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Center(child: Text('Any posts found!')),
                   ElevatedButton(
                     onPressed: () {
-                      context.read<FavBloc>().add(ResetCounter());
                       context.read<FavBloc>().add(FavFetched());
                     },
                     child: const Text('Try Again'),
@@ -62,17 +61,18 @@ class _PostListFavState extends State<PostListFav> {
             }
             return ListView.builder(
               itemBuilder: (BuildContext context, int index) {
-                return index >= state.fav.length
+                return index >= state.favPosts.length
                     ? const BottomLoader()
                     : PostListItemFav(
-                        post: state.fav[index],
+                        post: state.favPosts[index],
                         postRepository: _postRepository,
                         user: _user,
                       );
               },
               scrollDirection: Axis.vertical,
-              itemCount:
-                  state.hasReachedMax ? state.fav.length : state.fav.length + 1,
+              itemCount: state.hasReachedMax
+                  ? state.favPosts.length
+                  : state.favPosts.length + 1,
               controller: _scrollController,
             );
           case FavStatus.initial:
@@ -101,3 +101,4 @@ class _PostListFavState extends State<PostListFav> {
     return currentScroll >= (maxScroll * 0.9);
   }
 }
+*/
