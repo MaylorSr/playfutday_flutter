@@ -12,6 +12,7 @@ import 'package:playfutday_flutter/services/localstorage_service.dart';
 
 class ApiConstants {
   static String baseUrl = "http://localhost:8080";
+  //static String baseUrl = "http://10.0.2.2:8080";
 }
 
 class HeadersApiInterceptor implements InterceptorContract {
@@ -185,5 +186,4 @@ class RestAuthenticatedClient extends RestClient {
   RestAuthenticatedClient()
       : super.withInterceptors(
             List.of(<InterceptorContract>[AuthorizationInterceptor()]));
-
 }

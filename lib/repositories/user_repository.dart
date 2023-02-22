@@ -31,19 +31,7 @@ class UserRepository {
     return UserResponse.fromJson(jsonDecode(jsonResponse));
   }
 
-  Future<dynamic> myInfo() async {
-    String url = "/me";
-
-    String? token = _localStorageService.getFromDisk('user_token');
-
-    final response = await http.get(
-      Uri.parse(url_base + url),
-      headers: {'Authorization': 'Bearer $token'},
-    );
-
-    print(response.statusCode);
-    return UserLogin.fromJson(jsonDecode(response.body));
-  }
+  
 
 
 }
