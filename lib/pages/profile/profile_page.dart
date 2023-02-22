@@ -175,7 +175,7 @@ class ProfileScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(
                             10), // reduce el radio de borde para hacer que se vean cuadrados
                         child: FutureBuilder<Image>(
-                          future: postRepository.getImage('${post.author}'),
+                          future: postRepository.getImage('${post.image}'),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               return Container(
@@ -186,7 +186,7 @@ class ProfileScreen extends StatelessWidget {
                                     100, // establece una altura fija para que todos los posts tengan el mismo tamaño
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
-                                    fit: BoxFit.cover,
+                                    fit: BoxFit.contain,
                                     image: snapshot.data!.image,
                                   ),
                                 ),

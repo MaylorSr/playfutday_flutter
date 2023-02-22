@@ -67,7 +67,6 @@ class _PostListState extends State<PostList> {
                           post: state.posts[index],
                           postRepository: _postRepository,
                           user: widget.user,
-                          likeCount: 0,
                         );
                 },
                 scrollDirection: Axis.vertical,
