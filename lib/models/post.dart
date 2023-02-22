@@ -32,6 +32,7 @@ class Post {
   String? image;
   String? uploadDate;
   String? author;
+  String? idAuthor;
   String? authorFile;
   List<String>? likesByAuthor;
   int? countLikes;
@@ -44,6 +45,7 @@ class Post {
       this.image,
       this.uploadDate,
       this.author,
+      this.idAuthor,
       this.authorFile,
       this.likesByAuthor,
       this.countLikes,
@@ -56,6 +58,8 @@ class Post {
     image = json['image'];
     uploadDate = json['uploadDate'];
     author = json['author'];
+    idAuthor = json['idAuthor'];
+
     authorFile = json['authorFile'];
     likesByAuthor = json['likesByAuthor'];
     countLikes = json['countLikes'];
@@ -76,6 +80,8 @@ class Post {
     data['image'] = this.image;
     data['uploadDate'] = this.uploadDate;
     data['author'] = this.author;
+    data['idAuthor'] = this.idAuthor;
+
     data['authorFile'] = this.authorFile;
     data['likesByAuthor'] = this.likesByAuthor;
     data['countLikes'] = this.countLikes;

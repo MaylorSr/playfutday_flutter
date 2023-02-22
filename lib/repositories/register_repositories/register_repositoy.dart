@@ -21,7 +21,6 @@ class RegisterRepository {
           password: password,
           verifyPassword: verifyPassword,
         )));
-    print(response.statusCode);
     print(response.body);
     return response;
   }

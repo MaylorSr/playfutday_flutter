@@ -128,13 +128,7 @@ class _HomePageState extends State<HomePage> {
                         return LoginPage();
                       }
                     },
-                  )
-                  /* BlocProvider(
-                    create: (_) =>
-                        PostBloc(widget.postRepository)..add(PostFetched()),
-                    child: PostList(),
-                  )*/
-                  );
+                  ));
             case 1:
               return SearchScreen(
                 searchRepository: widget.searchRepositories,

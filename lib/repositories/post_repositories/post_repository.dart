@@ -127,4 +127,19 @@ class PostRepository {
     if (response.statusCode == 201) return true;
     return false;
   }
+
+  Future<dynamic> deletePostByAdmin(int idPost, String userId) async {
+    String? token = _localStorageService.getFromDisk('user_token');
+
+    String urlDeletePost =
+        // ignore: unnecessary_brace_in_string_interps
+        "/post/user/$idPost/user/$userId";
+    final response =
+        await http.delete(Uri.parse(url_base + urlDeletePost), headers: {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+      'Accept': 'application/json, text/plain'
+    });
+    print(response.statusCode);
+  }
 }

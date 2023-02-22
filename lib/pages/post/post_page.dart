@@ -12,7 +12,9 @@ import 'package:playfutday_flutter/repositories/post_repositories/post_repositor
 import 'bottom_loader.dart';
 
 class PostList extends StatefulWidget {
-  const PostList({super.key, required this.user});
+const PostList({Key? key, required this.user}) : super(key: key);
+
+
   final User user;
 
   @override
@@ -22,7 +24,6 @@ class PostList extends StatefulWidget {
 class _PostListState extends State<PostList> {
   final _scrollController = ScrollController();
   final _postRepository = PostRepository();
-  final _user = User();
   final _refreshController =
       Completer<void>(); // Add this line to define the _refreshController
 
@@ -65,7 +66,7 @@ class _PostListState extends State<PostList> {
                       : PostListItem(
                           post: state.posts[index],
                           postRepository: _postRepository,
-                          user: _user,
+                          user: widget.user,
                         );
                 },
                 scrollDirection: Axis.vertical,

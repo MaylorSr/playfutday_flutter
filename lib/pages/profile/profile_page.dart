@@ -2,14 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:playfutday_flutter/blocs/myPost/myPost_event.dart';
-import 'package:playfutday_flutter/pages/myPost/myPost_list.dart';
-import 'package:playfutday_flutter/pages/myPost/myPost_page.dart';
 import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
 
 import '../../blocs/authentication/authentication_bloc.dart';
 import '../../blocs/authentication/authentication_event.dart';
-import '../../blocs/myPost/myPost_bloc.dart';
 import '../../models/user.dart';
 
 class ProfileScreen extends StatelessWidget {

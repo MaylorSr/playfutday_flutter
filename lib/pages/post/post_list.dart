@@ -94,16 +94,44 @@ class PostListItem extends StatelessWidget {
                   ),
                 ),
                 Visibility(
-                  visible: '${post.author}' != '${user.username}',
+                  visible: user.roles?.contains('ADMIN') ?? false,
                   child: Row(
-                    // ignore: prefer_const_literals_to_create_immutables
                     children: [
-                      Text(
-                        '...',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text(
+                                  "WARNING!",
+                                  style: TextStyle(
+                                      color: Colors.redAccent,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                content: Text(
+                                    "Are you sure you want to delete this post?"),
+                                actions: [
+                                  TextButton(
+                                    child: Text("Cancel"),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text("Delete"),
+                                    onPressed: () {
+                                      postRepository.deletePostByAdmin(post.id as int, post.idAuthor as String);
+                                      // Aquí iría el código para eliminar la publicación
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -313,7 +341,6 @@ class _CommentDialogState extends State<CommentDialog> {
                     },
                   ),
                 ),
-              Text('No hay comentarios.'),
               Divider(),
               Padding(
                 padding: const EdgeInsets.all(8.0),
