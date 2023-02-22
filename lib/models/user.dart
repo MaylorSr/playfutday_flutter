@@ -139,9 +139,10 @@ class UserResponse extends User {
     email = json['email'];
     biography = json['biography'];
     phone = json['phone'];
-    birthday = json[
-        'birthday']; 
-    myPost = (json['myPost'] as List<dynamic>).cast<MyPost>();
+    birthday = json['birthday'];
+    myPost = (json['myPost'] as List<dynamic>)
+        .map((e) => MyPost.fromJson(e))
+        .toList();
     roles = (json['roles'] as List<dynamic>).cast<String>();
     avatar = json['avatar'];
     token = json['token'];
@@ -152,8 +153,7 @@ class UserResponse extends User {
     data['email'] = email;
     data['phone'] = phone;
     data['biography'] = biography;
-    data['birthday'] =
-        birthday; 
+    data['birthday'] = birthday;
     data['myPost'] = myPost;
     data['roles'] = roles;
     data['avatar'] = avatar;

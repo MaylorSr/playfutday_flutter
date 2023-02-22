@@ -94,7 +94,7 @@ class PostListItem extends StatelessWidget {
                   ),
                 ),
                 Visibility(
-                  visible: user.roles?.contains('ADMIN') ?? false,
+                    visible: user.roles?.contains('ADMIN') ?? false || user.username == post.author,
                   child: Row(
                     children: [
                       IconButton(
@@ -122,7 +122,9 @@ class PostListItem extends StatelessWidget {
                                   TextButton(
                                     child: Text("Delete"),
                                     onPressed: () {
-                                      postRepository.deletePostByAdmin(post.id as int, post.idAuthor as String);
+                                      postRepository.deletePostByAdmin(
+                                          post.id as int,
+                                          post.idAuthor as String);
                                       // Aquí iría el código para eliminar la publicación
                                       Navigator.pop(context);
                                     },

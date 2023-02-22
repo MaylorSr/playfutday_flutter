@@ -62,35 +62,36 @@ class _HomePageState extends State<HomePage> {
                     ? Color.fromARGB(255, 0, 153, 255)
                     : Colors.grey),
             label: 'Home',
+            backgroundColor: Color.fromARGB(255, 135, 7, 255),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search,
-                color: _selectedIndex == 1
-                    ? Color.fromARGB(255, 0, 153, 255)
-                    : Colors.grey),
-            label: 'Search',
-          ),
+              icon: Icon(Icons.search,
+                  color: _selectedIndex == 1
+                      ? Color.fromARGB(255, 0, 153, 255)
+                      : Colors.grey),
+              label: 'Search',
+              backgroundColor: Color.fromARGB(255, 135, 7, 255)),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add,
-                color: _selectedIndex == 2
-                    ? Color.fromARGB(255, 0, 153, 255)
-                    : Colors.grey),
-            label: '',
-          ),
+              icon: Icon(Icons.add,
+                  color: _selectedIndex == 2
+                      ? Color.fromARGB(255, 0, 153, 255)
+                      : Colors.grey),
+              label: '',
+              backgroundColor: Color.fromARGB(255, 135, 7, 255)),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite,
-                color: _selectedIndex == 3
-                    ? Color.fromARGB(255, 0, 153, 255)
-                    : Colors.grey),
-            label: 'Fav',
-          ),
+              icon: Icon(Icons.favorite,
+                  color: _selectedIndex == 3
+                      ? Color.fromARGB(255, 0, 153, 255)
+                      : Colors.grey),
+              label: 'Fav',
+              backgroundColor: Color.fromARGB(255, 135, 7, 255)),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person,
-                color: _selectedIndex == 4
-                    ? Color.fromARGB(255, 0, 153, 255)
-                    : Colors.grey),
-            label: 'Profile',
-          ),
+              icon: Icon(Icons.person,
+                  color: _selectedIndex == 4
+                      ? Color.fromARGB(255, 0, 153, 255)
+                      : Colors.grey),
+              label: 'Profile',
+              backgroundColor: Color.fromARGB(255, 135, 7, 255)),
         ],
         onTap: (index) {
           setState(() {

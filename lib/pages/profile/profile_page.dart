@@ -164,12 +164,45 @@ class ProfileScreen extends StatelessWidget {
               authBloc.add(UserLoggedOut());
             },
           ),
-          Divider(),/*
+          Divider(),
           Expanded(
-              child: BlocProvider(
-            create: (context) => MyPostBloc(),
-            child: PostPage(),
-          )),*/
+            child: user.myPost != null
+                ? GridView.count(
+                    crossAxisCount: 3,
+                    children: List.generate(user.myPost!.length, (index) {
+                      final post = user.myPost![index];
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                            10), // reduce el radio de borde para hacer que se vean cuadrados
+                        child: FutureBuilder<Image>(
+                          future: postRepository.getImage('${post.author}'),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return Container(
+                                margin: EdgeInsets.symmetric(horizontal: 10.0),
+                                width:
+                                    100, // establece un ancho fijo para que todos los posts tengan el mismo tamaño
+                                height:
+                                    100, // establece una altura fija para que todos los posts tengan el mismo tamaño
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: snapshot.data!.image,
+                                  ),
+                                ),
+                              );
+                            } else if (snapshot.hasError) {
+                              return Text('${snapshot.error}');
+                            } else {
+                              return CircularProgressIndicator();
+                            }
+                          },
+                        ),
+                      );
+                    }),
+                  )
+                : SizedBox.shrink(),
+          ),
         ],
       ),
     );
