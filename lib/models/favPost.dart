@@ -1,14 +1,15 @@
-class PostFav {
-  List<Content>? content;
+// ignore: file_names
+class PostFavResponse {
+  List<MyFavPost>? content;
   late final int totalPages;
 
-  PostFav({this.content});
+  PostFavResponse({this.content});
 
-  PostFav.fromJson(Map<String, dynamic> json) {
+  PostFavResponse.fromJson(Map<String, dynamic> json) {
     if (json['content'] != null) {
-      content = <Content>[];
+      content = <MyFavPost>[];
       json['content'].forEach((v) {
-        content!.add(new Content.fromJson(v));
+        content!.add(new MyFavPost.fromJson(v));
       });
       totalPages = json['totalPages'];
     }
@@ -24,17 +25,17 @@ class PostFav {
   }
 }
 
-class Content {
+class MyFavPost {
   String? tag;
   String? image;
   String? author;
   String? authorFile;
   int? countLikes;
 
-  Content(
+  MyFavPost(
       {this.tag, this.image, this.author, this.authorFile, this.countLikes});
 
-  Content.fromJson(Map<String, dynamic> json) {
+  MyFavPost.fromJson(Map<String, dynamic> json) {
     tag = json['tag'];
     image = json['image'];
     author = json['author'];

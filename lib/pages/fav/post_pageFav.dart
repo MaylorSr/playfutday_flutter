@@ -38,7 +38,6 @@ class _PostListFavState extends State<PostListFav> {
                 const Center(child: Text('failed to get posts!')),
                 ElevatedButton(
                   onPressed: () {
-                    context.read<FavBloc>().add(ResetCounter());
                     context.read<FavBloc>().add(FavFetched());
                   },
                   child: const Text('Try Again'),

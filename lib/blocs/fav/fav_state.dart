@@ -1,20 +1,37 @@
 import 'package:equatable/equatable.dart';
+import 'package:playfutday_flutter/models/favPost.dart';
+import 'package:playfutday_flutter/models/post.dart';
 
-import 'fav_event.dart';
+enum FavStatus { initial, success, failure }
 
-abstract class FavEvent extends Equatable {
+class FavState extends Equatable {
+  const FavState({
+    this.status = FavStatus.initial,
+    this.fav = const <MyFavPost>[],
+    this.hasReachedMax = false,
+  });
+
+  final FavStatus status;
+  final List<MyFavPost> fav;
+  final bool hasReachedMax;
+
+  FavState copyWith({
+    FavStatus? status,
+    List<MyFavPost>? favs,
+    bool? hasReachedMax, required List<MyFavPost> fav,
+  }) {
+    return FavState(
+      status: status ?? this.status,
+      fav: fav,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+    );
+  }
+
   @override
-  List<Object> get props => [];
-}
-
-class FavFetched extends FavEvent {}
-
-class FavFailure extends FavState {
-  final String error;
-
-  // ignore: prefer_const_constructors_in_immutables
-  FavFailure({required this.error});
+  String toString() {
+    return '''FavState { status: $status, hasReachedMax: $hasReachedMax, favs: ${fav.length} }''';
+  }
 
   @override
-  List<Object> get props => [error];
+  List<Object> get props => [status, fav, hasReachedMax];
 }

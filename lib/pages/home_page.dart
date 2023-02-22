@@ -10,6 +10,7 @@ import 'package:playfutday_flutter/repositories/post_repositories/post_repositor
 import 'package:playfutday_flutter/repositories/post_repositories/search_repository.dart';
 import '../blocs/bottonNavigator/bottom_navigation_bloc.dart';
 import '../blocs/fav/fav_bloc.dart';
+import '../blocs/fav/fav_event.dart';
 import '../blocs/fav/fav_state.dart';
 import '../blocs/photo/photo_bloc.dart';
 import '../blocs/photo/route/generate_route.dart';

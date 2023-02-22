@@ -1,14 +1,18 @@
 import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:equatable/equatable.dart';
+import 'package:get_it/get_it.dart';
+import 'package:playfutday_flutter/blocs/fav/fav.dart';
 import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
+//import 'package:http/http.dart' as http;
 import 'package:stream_transform/stream_transform.dart';
 
-import 'fav_event.dart';
-import 'fav_state.dart';
 
-var contador = 0;
+//const _artworkLimit = 20;
 const throttleDuration = Duration(milliseconds: 100);
+
 
 EventTransformer<E> throttleDroppable<E>(Duration duration) {
   return (events, mapper) {
@@ -17,56 +21,47 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
 }
 
 class FavBloc extends Bloc<FavEvent, FavState> {
-  FavBloc(this.postRepository) : super(const FavState()) {
+  FavBloc(this._postRepository) : super(const FavState()) {
     on<FavFetched>(
       _onFavFetched,
       transformer: throttleDroppable(throttleDuration),
     );
-    on<ResetCounter>(_onResetCounter);
   }
+  
+    final PostRepository _postRepository;
 
-  final PostRepository postRepository;
+
 
   Future<void> _onFavFetched(
     FavFetched event,
     Emitter<FavState> emit,
   ) async {
     if (state.hasReachedMax) return;
-    contador++;
     try {
       if (state.status == FavStatus.initial) {
-        final fav = await postRepository.fetchPostsFav(contador);
+        final myFavPosts = await _postRepository.getMyPost();
         return emit(
           state.copyWith(
             status: FavStatus.success,
-            favs: fav,
+            fav: myFavPosts,
             hasReachedMax: false,
           ),
         );
       }
-      final fav = await postRepository.fetchPostsFav(contador);
-      if (fav.isEmpty && state.status == FavStatus.success) {
-        contador = 0; 
-        emit(state.copyWith(hasReachedMax: true));
-      } else {
-        emit(
-          state.copyWith(
-            status: FavStatus.success,
-            favs: List.of(state.fav)..addAll(fav),
-            hasReachedMax: false,
-          ),
-        );
-      }
+      //final artworks = await _fetchArtworks(state.artworks.length);
+      final artworks = await _postRepository.getMyPost(state.fav.length);
+      artworks.isEmpty
+          ? emit(state.copyWith(hasReachedMax: true))
+          : emit(
+              state.copyWith(
+                status: FavStatus.success,
+                fav: List.of(state.fav)..addAll(artworks),
+                hasReachedMax: false,
+              ),
+            );
     } catch (_) {
       emit(state.copyWith(status: FavStatus.failure));
     }
   }
-
-  void _onResetCounter(ResetCounter event, Emitter<FavState> emit) {
-    contador = -1;
-  }
-}
-
-class ResetCounter extends FavEvent {
-  ResetCounter();
+  
 }

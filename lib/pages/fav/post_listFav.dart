@@ -14,7 +14,7 @@ class PostListItemFav extends StatelessWidget {
     required User user,
   }) : super(key: key);
 
-  final Content post;
+  final MyFavPost post;
   final PostRepository postRepository;
   @override
   Widget build(BuildContext context) {

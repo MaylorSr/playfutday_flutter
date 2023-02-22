@@ -44,7 +44,7 @@ class PostRepository {
   }
 
 // ignore: no_leading_underscores_for_local_identifiers
-  Future<List<Content>> fetchPostsFav([int _startIndex = 0]) async {
+  Future<PostFavResponse> fetchPostsFav([int _startIndex = 0]) async {
 // ignore: unnecessary_brace_in_string_interps, unused_local_variable
     String page = "/fav?page=${_startIndex}";
 
@@ -54,9 +54,7 @@ class PostRepository {
       Uri.parse(url_base + page),
       headers: {'Authorization': 'Bearer $token'},
     );
-    print(response.statusCode);
-    print(response.body);
-    return PostFav.fromJson(jsonDecode(response.body)).content as List<Content>;
+    return PostFavResponse.fromJson(jsonDecode(response.body));
   }
 
   Future<Image> getImage(String imageName) async {
