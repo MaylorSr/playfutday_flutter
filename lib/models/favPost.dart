@@ -25,6 +25,7 @@ class PostFavResponse {
 }
 
 class MyFavPost {
+  int? id;
   String? tag;
   String? image;
   String? author;
@@ -32,9 +33,15 @@ class MyFavPost {
   int? countLikes;
 
   MyFavPost(
-      {this.tag, this.image, this.author, this.authorFile, this.countLikes});
+      {this.id,
+      this.tag,
+      this.image,
+      this.author,
+      this.authorFile,
+      this.countLikes});
 
   MyFavPost.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     tag = json['tag'];
     image = json['image'];
     author = json['author'];
@@ -44,6 +51,7 @@ class MyFavPost {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
     data['tag'] = this.tag;
     data['image'] = this.image;
     data['author'] = this.author;

@@ -26,7 +26,7 @@ class PostRepository {
   }
 
 // ignore: no_leading_underscores_for_local_identifiers
-  Future<List<Post>> fetchPosts([int _startIndex = -1]) async {
+  Future<PostResponse> fetchPosts([int _startIndex = 0]) async {
 // ignore: unnecessary_brace_in_string_interps, unused_local_variable
     String page = "/post/?page=${_startIndex}";
 
@@ -37,12 +37,9 @@ class PostRepository {
       headers: {'Authorization': 'Bearer $token'},
     );
 
-    print(response.statusCode);
-
-    return PostResponse.fromJson(jsonDecode(response.body)).content
-        as List<Post>;
+    return PostResponse.fromJson(jsonDecode(response.body));
   }
-/*
+
 // ignore: no_leading_underscores_for_local_identifiers
   Future<PostFavResponse> fetchPostsFav([int _startIndex = 0]) async {
 // ignore: unnecessary_brace_in_string_interps, unused_local_variable
@@ -57,7 +54,7 @@ class PostRepository {
     print(response.body);
     return PostFavResponse.fromJson(jsonDecode(response.body));
   }
-*/
+
   Future<Image> getImage(String imageName) async {
     String? token = _localStorageService.getFromDisk('user_token');
     // ignore: unnecessary_brace_in_string_interps

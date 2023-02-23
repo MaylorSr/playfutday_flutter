@@ -9,6 +9,8 @@ import 'package:playfutday_flutter/pages/search/search_page.dart';
 import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
 import 'package:playfutday_flutter/repositories/post_repositories/search_repository.dart';
 import '../blocs/bottonNavigator/bottom_navigation_bloc.dart';
+import '../blocs/fav/fav_bloc.dart';
+import '../blocs/fav/fav_event.dart';
 import '../blocs/photo/photo_bloc.dart';
 import '../blocs/photo/route/generate_route.dart';
 import '../blocs/photo/route/route_nanme.dart';
@@ -140,8 +142,8 @@ class _HomePageState extends State<HomePage> {
                   onGenerateRoute: RouteGenerator.generateRoute,
                 ),
               );
-            /*case 3:
-              return Scaffold(
+            case 3:
+            return Scaffold(
                   appBar: AppBar(
                     backgroundColor: Colors.white,
                     title: Text('PlayFutDay',
@@ -151,11 +153,20 @@ class _HomePageState extends State<HomePage> {
                             fontSize: 18,
                             fontWeight: FontWeight.w600)),
                   ),
-                  body: BlocProvider(
-                    create: (_) =>
-                        FavBloc(widget.postRepository)..add(FavFetched()),
-                    child: PostListFav(),
-                  ));*/
+                  body: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                    builder: (context, state) {
+                      if (state is AuthenticationAuthenticated) {
+                        return BlocProvider(
+                            create: (_) => FavBloc(widget.postRepository)
+                              ..add(FavFetched()),
+                            child: PostListFav(
+                              user: state.user,
+                            ));
+                      } else {
+                        return LoginPage();
+                      }
+                    },
+                  ));
             case 4:
               return BlocBuilder<AuthenticationBloc, AuthenticationState>(
                 builder: (context, state) {

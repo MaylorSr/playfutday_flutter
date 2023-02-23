@@ -1,4 +1,4 @@
-/*import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:playfutday_flutter/models/models.dart';
 import 'package:playfutday_flutter/pages/fav/post_listFav.dart';
@@ -10,7 +10,10 @@ import '../../blocs/fav/fav_state.dart';
 import '../post/bottom_loader.dart';
 
 class PostListFav extends StatefulWidget {
-  const PostListFav({super.key});
+   const PostListFav({Key? key, required this.user}) : super(key: key);
+
+  final User user;
+
 
   @override
   State<PostListFav> createState() => _PostListFavState();
@@ -19,7 +22,6 @@ class PostListFav extends StatefulWidget {
 class _PostListFavState extends State<PostListFav> {
   final _scrollController = ScrollController();
   final _postRepository = PostRepository();
-  final _user = User();
   @override
   void initState() {
     super.initState();
@@ -66,7 +68,7 @@ class _PostListFavState extends State<PostListFav> {
                     : PostListItemFav(
                         post: state.favPosts[index],
                         postRepository: _postRepository,
-                        user: _user,
+                        user: widget.user,
                       );
               },
               scrollDirection: Axis.vertical,
@@ -101,4 +103,3 @@ class _PostListFavState extends State<PostListFav> {
     return currentScroll >= (maxScroll * 0.9);
   }
 }
-*/

@@ -1,6 +1,6 @@
 class PostResponse {
   late final List<Post> content;
-  late final int totalPages;
+  late int totalPages;
   PostResponse({required this.content, required this.totalPages});
 
   PostResponse.fromJson(Map<String, dynamic> json) {

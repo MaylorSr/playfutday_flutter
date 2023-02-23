@@ -1,4 +1,4 @@
-/*import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
 import 'package:playfutday_flutter/models/favPost.dart';
 
 enum FavStatus { initial, success, failure }
@@ -28,10 +28,9 @@ class FavState extends Equatable {
 
   @override
   String toString() {
-    return '''DwellingFavouritesState { status: $status, hasReachedMax: $hasReachedMax, posts: ${favPosts.length} }''';
+    return '''PostFavouritesState { status: $status, hasReachedMax: $hasReachedMax, posts: ${favPosts.length} }''';
   }
 
   @override
   List<Object> get props => [status, favPosts, hasReachedMax];
 }
-*/
