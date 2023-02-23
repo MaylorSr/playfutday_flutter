@@ -38,18 +38,13 @@ class _EditPhotoPageState extends State<EditPhotoPage> {
     //File croppedFile = await ImageCropper.cropImage(
     CroppedFile? croppedFile = await ImageCropper.platform.cropImage(
       sourcePath: imageFile.path,
-      //aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
       uiSettings: [
         AndroidUiSettings(
             toolbarTitle: 'Cropper',
             toolbarColor: Colors.blue,
             hideBottomControls: true,
-            toolbarWidgetColor: Colors.white,
-            initAspectRatio: CropAspectRatioPreset.original,
+            showCropGrid: true,
             lockAspectRatio: false),
-        IOSUiSettings(
-          title: 'Cropper',
-        )
       ],
     );
     if (croppedFile != null) {

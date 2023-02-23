@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:playfutday_flutter/models/favPost.dart';
 import 'package:playfutday_flutter/models/models.dart';
 
 enum PostStatus { initial, success, failure }
@@ -28,7 +29,7 @@ class PostState extends Equatable {
 
   @override
   String toString() {
-    return '''PostState { status: $status, hasReachedMax: $hasReachedMax, posts: ${posts.length} }''';
+    return '''PostsState { status: $status, hasReachedMax: $hasReachedMax, posts: ${posts.length} }''';
   }
 
   @override

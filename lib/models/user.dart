@@ -131,29 +131,31 @@ class UserCommentaries {
 }
 
 class UserResponse extends User {
-  UserResponse(
-      username, avatar, token, email, biography, phone, birthday, myPost, roles)
+  UserResponse(id, username, avatar, token, email, biography, phone, birthday,
+      myPost, roles)
       : super();
   UserResponse.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     username = json['username'];
     email = json['email'];
     biography = json['biography'];
     phone = json['phone'];
-    birthday = json[
-        'birthday']; 
-    myPost = (json['myPost'] as List<dynamic>).cast<MyPost>();
+    birthday = json['birthday'];
+    myPost = (json['myPost'] as List<dynamic>)
+        .map((e) => MyPost.fromJson(e))
+        .toList();
     roles = (json['roles'] as List<dynamic>).cast<String>();
     avatar = json['avatar'];
     token = json['token'];
   }
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = id;
     data['username'] = username;
     data['email'] = email;
     data['phone'] = phone;
     data['biography'] = biography;
-    data['birthday'] =
-        birthday; 
+    data['birthday'] = birthday;
     data['myPost'] = myPost;
     data['roles'] = roles;
     data['avatar'] = avatar;

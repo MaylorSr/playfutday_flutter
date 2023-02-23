@@ -10,7 +10,7 @@ import 'package:playfutday_flutter/repositories/post_repositories/post_repositor
 import 'package:playfutday_flutter/repositories/post_repositories/search_repository.dart';
 import '../blocs/bottonNavigator/bottom_navigation_bloc.dart';
 import '../blocs/fav/fav_bloc.dart';
-import '../blocs/fav/fav_state.dart';
+import '../blocs/fav/fav_event.dart';
 import '../blocs/photo/photo_bloc.dart';
 import '../blocs/photo/route/generate_route.dart';
 import '../blocs/photo/route/route_nanme.dart';
@@ -62,35 +62,36 @@ class _HomePageState extends State<HomePage> {
                     ? Color.fromARGB(255, 0, 153, 255)
                     : Colors.grey),
             label: 'Home',
+            backgroundColor: Color.fromARGB(255, 135, 7, 255),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.search,
-                color: _selectedIndex == 1
-                    ? Color.fromARGB(255, 0, 153, 255)
-                    : Colors.grey),
-            label: 'Search',
-          ),
+              icon: Icon(Icons.search,
+                  color: _selectedIndex == 1
+                      ? Color.fromARGB(255, 0, 153, 255)
+                      : Colors.grey),
+              label: 'Search',
+              backgroundColor: Color.fromARGB(255, 135, 7, 255)),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add,
-                color: _selectedIndex == 2
-                    ? Color.fromARGB(255, 0, 153, 255)
-                    : Colors.grey),
-            label: '',
-          ),
+              icon: Icon(Icons.add,
+                  color: _selectedIndex == 2
+                      ? Color.fromARGB(255, 0, 153, 255)
+                      : Colors.grey),
+              label: '',
+              backgroundColor: Color.fromARGB(255, 135, 7, 255)),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite,
-                color: _selectedIndex == 3
-                    ? Color.fromARGB(255, 0, 153, 255)
-                    : Colors.grey),
-            label: 'Fav',
-          ),
+              icon: Icon(Icons.favorite,
+                  color: _selectedIndex == 3
+                      ? Color.fromARGB(255, 0, 153, 255)
+                      : Colors.grey),
+              label: 'Fav',
+              backgroundColor: Color.fromARGB(255, 135, 7, 255)),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person,
-                color: _selectedIndex == 4
-                    ? Color.fromARGB(255, 0, 153, 255)
-                    : Colors.grey),
-            label: 'Profile',
-          ),
+              icon: Icon(Icons.person,
+                  color: _selectedIndex == 4
+                      ? Color.fromARGB(255, 0, 153, 255)
+                      : Colors.grey),
+              label: 'Profile',
+              backgroundColor: Color.fromARGB(255, 135, 7, 255)),
         ],
         onTap: (index) {
           setState(() {
@@ -142,7 +143,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               );
             case 3:
-              return Scaffold(
+            return Scaffold(
                   appBar: AppBar(
                     backgroundColor: Colors.white,
                     title: Text('PlayFutDay',
@@ -152,10 +153,19 @@ class _HomePageState extends State<HomePage> {
                             fontSize: 18,
                             fontWeight: FontWeight.w600)),
                   ),
-                  body: BlocProvider(
-                    create: (_) =>
-                        FavBloc(widget.postRepository)..add(FavFetched()),
-                    child: PostListFav(),
+                  body: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                    builder: (context, state) {
+                      if (state is AuthenticationAuthenticated) {
+                        return BlocProvider(
+                            create: (_) => FavBloc(widget.postRepository)
+                              ..add(FavFetched()),
+                            child: PostListFav(
+                              user: state.user,
+                            ));
+                      } else {
+                        return LoginPage();
+                      }
+                    },
                   ));
             case 4:
               return BlocBuilder<AuthenticationBloc, AuthenticationState>(

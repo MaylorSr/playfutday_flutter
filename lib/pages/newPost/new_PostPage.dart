@@ -18,91 +18,82 @@ class NewPost extends StatefulWidget {
 class _NewPostState extends State<NewPost> {
   late File _image;
   final picker = ImagePicker();
-
   @override
   Widget build(BuildContext context) {
-    return Form(
+    return Center(
       child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            TextFormField(
-              decoration: InputDecoration(
-                labelText: 'Tag',
-                filled: true,
-                isDense: true,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Form(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              const SizedBox(height: 12),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Tag',
+                  filled: true,
+                  isDense: true,
+                ),
+                keyboardType: TextInputType.text,
+                autocorrect: false,
+                maxLength: 50,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Tag is required.';
+                  }
+                  return null;
+                },
               ),
-              /*controller: _usernameController,*/
-              keyboardType: TextInputType.emailAddress,
-              autocorrect: false,
-            ),
-            SizedBox(
-              height: 12,
-            ),
-            TextFormField(
-              // ignore: prefer_const_constructors
-              decoration: InputDecoration(
-                labelText: 'Description',
-                filled: true,
-                isDense: true,
+              const SizedBox(height: 12),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Description',
+                  filled: true,
+                  isDense: true,
+                ),
+                maxLines: 5,
+                maxLength: 200,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Description is required.';
+                  }
+                  return null;
+                },
               ),
-              obscureText: false,
-              /*
-                    controller: _passwordController,*/
-              validator: (value) {
-                if (value == null) {
-                  return 'Password is required.';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    _showSelectionDialog();
-                  },
-                  child: BlocBuilder<PhotoBloc, PhotoState>(
-                    //cubit: BlocProvider.of<PhotoBloc>(
-                    bloc: BlocProvider.of<PhotoBloc>(
-                        context), // provide the local bloc instance
-                    builder: (context, state) {
-                      return Container(
-                        width: 50,
-                        child: state is PhotoInitial
-                            ? Icon(
-                                Icons.camera_alt_outlined,
-                                size: 50,
-                              )
-                            : Image.file((state as PhotoSet).photo),
-                      );
+              const SizedBox(height: 12),
+              BlocBuilder<PhotoBloc, PhotoState>(
+                bloc: BlocProvider.of<PhotoBloc>(context),
+                builder: (context, state) {
+                  return GestureDetector(
+                    onTap: () {
+                      _showSelectionDialog();
                     },
-                  ),
-                )
-              ],
-            ),
-            Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: ElevatedButton(
-                  // color: Theme.of(context).primaryColor,
-                  //textColor: Colors.white,
-                  //padding: const EdgeInsets.all(16),
-                  // ignore: sort_child_properties_last
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent),
-                  onPressed: () {},
-                  child: Text(
-                      'Add Post'), /*
-                        onPressed: state is LoginLoading
-                            ? () {}
-                            : _onLoginButtonPressed,
-                      */
-                )),
-          ],
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      height: MediaQuery.of(context).size.width * 0.6,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: state is PhotoInitial
+                          ? Icon(Icons.camera_alt_outlined, size: 50)
+                          : Image.file((state as PhotoSet).photo,
+                              fit: BoxFit.cover),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Theme.of(context).primaryColor,
+                  onPrimary: Colors.white,
+                ),
+                onPressed: () {},
+                child: Text('Add Post'),
+              ),
+            ],
+          ),
         ),
       ),
     );

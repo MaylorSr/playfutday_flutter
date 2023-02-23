@@ -12,8 +12,7 @@ import 'package:playfutday_flutter/repositories/post_repositories/post_repositor
 import 'bottom_loader.dart';
 
 class PostList extends StatefulWidget {
-const PostList({Key? key, required this.user}) : super(key: key);
-
+  const PostList({Key? key, required this.user}) : super(key: key);
 
   final User user;
 
@@ -26,7 +25,6 @@ class _PostListState extends State<PostList> {
   final _postRepository = PostRepository();
   final _refreshController =
       Completer<void>(); // Add this line to define the _refreshController
-
   @override
   void initState() {
     super.initState();
@@ -39,6 +37,7 @@ class _PostListState extends State<PostList> {
       builder: (context, state) {
         switch (state.status) {
           case PostStatus.failure:
+            // ignore: prefer_const_constructors
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -51,30 +50,30 @@ class _PostListState extends State<PostList> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Center(child: Text('Any posts found!')),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<PostBloc>().add(PostFetched());
+                    },
+                    child: const Text('Try Again'),
+                  ),
                 ],
               );
             }
-            return RefreshIndicator(
-              onRefresh: () async {
-                context.read<PostBloc>().add(PostRefresh());
-                await _refreshController.future;
+            return ListView.builder(
+              itemBuilder: (BuildContext context, int index) {
+                return index >= state.posts.length
+                    ? const BottomLoader()
+                    : PostListItem(
+                        post: state.posts[index],
+                        postRepository: _postRepository,
+                        user: widget.user,
+                      );
               },
-              child: ListView.builder(
-                itemBuilder: (BuildContext context, int index) {
-                  return index >= state.posts.length
-                      ? const BottomLoader()
-                      : PostListItem(
-                          post: state.posts[index],
-                          postRepository: _postRepository,
-                          user: widget.user,
-                        );
-                },
-                scrollDirection: Axis.vertical,
-                itemCount: state.hasReachedMax
-                    ? state.posts.length
-                    : state.posts.length + 1,
-                controller: _scrollController,
-              ),
+              scrollDirection: Axis.vertical,
+              itemCount: state.hasReachedMax
+                  ? state.posts.length
+                  : state.posts.length + 1,
+              controller: _scrollController,
             );
           case PostStatus.initial:
             return const Center(child: CircularProgressIndicator());
