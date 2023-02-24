@@ -6,15 +6,45 @@ import 'package:playfutday_flutter/repositories/post_repositories/post_repositor
 
 import '../../services/authentication_service.dart';
 
+class LikeButton extends StatefulWidget {
+  const LikeButton({Key? key, required this.idPost}) : super(key: key);
+  final int idPost;
+
+  @override
+  _LikeButtonState createState() => _LikeButtonState();
+}
+
+class _LikeButtonState extends State<LikeButton> {
+  bool _isLiked = false;
+  final _postRepository = PostRepository();
+  final int idPost = 1;
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          _postRepository.postLikeByMe(widget.idPost);
+          _isLiked = !_isLiked;
+        });
+      },
+      child: Icon(
+        _isLiked ? Icons.favorite_border : Icons.favorite,
+        color: _isLiked ? null : Colors.red,
+      ),
+    );
+  }
+}
+
 class PostListItemFav extends StatelessWidget {
+  final User user;
   const PostListItemFav({
     Key? key,
     required this.post,
     required this.postRepository,
-    required User user,
+    required this.user,
   }) : super(key: key);
 
-  final Content post;
+  final MyFavPost post;
   final PostRepository postRepository;
   @override
   Widget build(BuildContext context) {
@@ -60,16 +90,45 @@ class PostListItemFav extends StatelessWidget {
                   ),
                 ),
                 Visibility(
-                  visible: '${post.author}' != '${'user'}',
+                  visible: post.author == user.username,
                   child: Row(
-                    // ignore: prefer_const_literals_to_create_immutables
                     children: [
-                      Text(
-                        '...',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text(
+                                  "WARNING!",
+                                  style: TextStyle(
+                                      color: Colors.redAccent,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                content: Text(
+                                    "Are you sure you want to delete this post?"),
+                                actions: [
+                                  TextButton(
+                                    child: Text("Cancel"),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text("Delete"),
+                                    onPressed: () {
+                                      postRepository.deletePostByAdmin(
+                                          post.id as int, user.id as String);
+                                      // Aquí iría el código para eliminar la publicación
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -114,29 +173,10 @@ class PostListItemFav extends StatelessWidget {
                             fontStyle: FontStyle.italic,
                             fontWeight: FontWeight.w400),
                       ),
-                      InkWell(
-                        onTap: () {},
-                        child: Icon(
-                          Icons.favorite_border,
-                          size: 28,
-                        ),
+                      LikeButton(
+                        idPost: int.parse('${post.id}'),
                       ),
-                      SizedBox(width: 8),
-                      Text(
-                        '${post.countLikes}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      SizedBox(width: 16),
-                      InkWell(
-                        onTap: () {},
-                        child: Icon(
-                          Icons.chat_bubble_outline,
-                          size: 28,
-                        ),
-                      )
+                      SizedBox(width: 16)
                     ],
                   ),
                 ],

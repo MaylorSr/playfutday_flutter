@@ -5,7 +5,7 @@ import 'package:playfutday_flutter/models/userLogin.dart';
 import 'package:playfutday_flutter/repositories/repositories.dart';
 
 import '../../models/post.dart';
-
+/*
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ProfileBloc(UserRepository userRepository)
       : _userRepository = userRepository,
@@ -38,3 +38,4 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }
   }
 }
+*/

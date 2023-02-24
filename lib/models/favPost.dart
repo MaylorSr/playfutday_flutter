@@ -1,37 +1,47 @@
-class PostFav {
-  List<Content>? content;
+class PostFavResponse {
+  List<MyFavPost>? content;
+  late int totalPages;
 
-  PostFav({this.content});
+  PostFavResponse({this.content, required this.totalPages});
 
-  PostFav.fromJson(Map<String, dynamic> json) {
+  PostFavResponse.fromJson(Map<String, dynamic> json) {
     if (json['content'] != null) {
-      content = <Content>[];
+      content = <MyFavPost>[];
       json['content'].forEach((v) {
-        content!.add(new Content.fromJson(v));
+        content!.add(new MyFavPost.fromJson(v));
       });
+      totalPages = json['totalPages'];
     }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.content != null) {
-      data['content'] = this.content!.map((v) => v.toJson()).toList();
+      data['content'] = content!.map((v) => v.toJson()).toList();
     }
+    data['totalPages'] = totalPages;
     return data;
   }
 }
 
-class Content {
+class MyFavPost {
+  int? id;
   String? tag;
   String? image;
   String? author;
   String? authorFile;
   int? countLikes;
 
-  Content(
-      {this.tag, this.image, this.author, this.authorFile, this.countLikes});
+  MyFavPost(
+      {this.id,
+      this.tag,
+      this.image,
+      this.author,
+      this.authorFile,
+      this.countLikes});
 
-  Content.fromJson(Map<String, dynamic> json) {
+  MyFavPost.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
     tag = json['tag'];
     image = json['image'];
     author = json['author'];
@@ -41,6 +51,7 @@ class Content {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
     data['tag'] = this.tag;
     data['image'] = this.image;
     data['author'] = this.author;

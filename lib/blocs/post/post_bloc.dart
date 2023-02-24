@@ -24,44 +24,31 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   }
 
   final PostRepository postRepository;
-  final _refreshController =
-      Completer<void>(); // Add this line to define the _refreshController
 
   Future<void> _onPostFetched(
-      PostFetched event, Emitter<PostState> emit) async {
+      PostFetched event, Emitter<PostState> emitter) async {
     if (state.hasReachedMax) return;
-    contador++;
-
     try {
       if (state.status == PostStatus.initial) {
-        final posts = await postRepository.fetchPosts(contador);
-        return emit(
-          state.copyWith(
-            status: PostStatus.success,
-            posts: posts,
-            hasReachedMax: false,
-          ),
-        );
+        contador = 0;
+        final response = await postRepository.fetchPosts(contador);
+        final posts = response;
+        return emitter(state.copyWith(
+          status: PostStatus.success,
+          posts: posts.content,
+          hasReachedMax: response.totalPages - 1 <= contador,
+        ));
       }
+      contador += 1;
+      final response = await postRepository.fetchPosts(contador);
+      final posts = response;
 
-      final posts = await postRepository.fetchPosts(contador);
-
-      if (posts.isEmpty && state.status == PostStatus.success) {
-        contador = 0; // Reiniciar el contador a 0
-        emit(state.copyWith(
-            hasReachedMax: true, posts: [])); // Vaciar la lista de posts
-      } else {
-        emit(
-          state.copyWith(
-            status: PostStatus.success,
-            posts: List.of(state.posts)..addAll(posts),
-            hasReachedMax: true,
-          ),
-        );
-      }
-      _refreshController.complete(); // Resolver el completer
+      emitter(state.copyWith(
+          status: PostStatus.success,
+          posts: List.of(state.posts)..addAll(posts.content),
+          hasReachedMax: response.totalPages - 1 <= contador));
     } catch (_) {
-      emit(state.copyWith(status: PostStatus.failure));
+      emitter(state.copyWith(status: PostStatus.failure));
     }
   }
 }

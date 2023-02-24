@@ -1,14 +1,14 @@
 // ignore_for_file: prefer_const_constructors, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:http/http.dart';
+
 import 'package:playfutday_flutter/models/models.dart';
 import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
 
 class LikeButton extends StatefulWidget {
   const LikeButton({Key? key, required this.idPost}) : super(key: key);
   final int idPost;
+
   @override
   _LikeButtonState createState() => _LikeButtonState();
 }
@@ -48,6 +48,8 @@ class PostListItem extends StatelessWidget {
 
   // ignore: unused_field
   final bool _isLiked = false;
+  final int idPost = 1;
+
   // ignore: no_leading_underscores_for_local_identifiers, unused_element
 
   @override
@@ -94,7 +96,7 @@ class PostListItem extends StatelessWidget {
                   ),
                 ),
                 Visibility(
-                  visible: user.roles?.contains('ADMIN') ?? false,
+                  visible: user.roles!.contains('ADMIN') || post.author == user.username,
                   child: Row(
                     children: [
                       IconButton(
@@ -122,7 +124,9 @@ class PostListItem extends StatelessWidget {
                                   TextButton(
                                     child: Text("Delete"),
                                     onPressed: () {
-                                      postRepository.deletePostByAdmin(post.id as int, post.idAuthor as String);
+                                      postRepository.deletePostByAdmin(
+                                          post.id as int,
+                                          post.idAuthor as String);
                                       // Aquí iría el código para eliminar la publicación
                                       Navigator.pop(context);
                                     },
@@ -212,15 +216,6 @@ class PostListItem extends StatelessWidget {
                       LikeButton(
                         idPost: int.parse('${post.id}'),
                       ),
-                      SizedBox(width: 3),
-                      SizedBox(width: 3),
-                      Text(
-                        '${post.countLikes}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
                       SizedBox(width: 16),
                       InkWell(
                         onTap: () {
@@ -240,7 +235,7 @@ class PostListItem extends StatelessWidget {
                       ),
                       SizedBox(width: 8),
                       Text(
-                        '${post.commentaries == null ? 0 : post.commentaries!.length} ',
+                        '${post.commentaries == null ? '' : post.commentaries!.length} ',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
