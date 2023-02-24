@@ -45,7 +45,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
 
       emitter(state.copyWith(
           status: PostStatus.success,
-          posts: List.of(state.posts)..addAll(posts.content!),
+          posts: List.of(state.posts)..addAll(posts.content),
           hasReachedMax: response.totalPages - 1 <= contador));
     } catch (_) {
       emitter(state.copyWith(status: PostStatus.failure));

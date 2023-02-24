@@ -96,8 +96,7 @@ class PostListItem extends StatelessWidget {
                   ),
                 ),
                 Visibility(
-                  visible: user.roles?.contains('ADMIN') ??
-                      false || post.author == user.username,
+                  visible: user.roles!.contains('ADMIN') || post.author == user.username,
                   child: Row(
                     children: [
                       IconButton(

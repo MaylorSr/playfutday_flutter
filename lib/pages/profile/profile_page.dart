@@ -196,10 +196,6 @@ class ProfileScreen extends StatelessWidget {
             ),
           ),
           ElevatedButton(
-            //textColor: Theme.of(context).primaryColor,
-            /*style: TextButton.styleFrom(
-                  primary: Theme.of(context).primaryColor,
-                ),*/
             child: Text('Logout'),
             onPressed: () {
               authBloc.add(UserLoggedOut());
