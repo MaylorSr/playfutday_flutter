@@ -7,6 +7,7 @@ import 'package:playfutday_flutter/models/models.dart';
 import 'package:playfutday_flutter/services/services.dart';
 
 import '../../config/locator.dart';
+// ignore: unnecessary_import
 import '../../models/post.dart';
 import '../../rest/rest_client.dart';
 import 'package:http/http.dart' as http;
