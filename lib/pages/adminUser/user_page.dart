@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:playfutday_flutter/models/adminUsers.dart';
 import 'package:playfutday_flutter/models/models.dart';
-import 'package:playfutday_flutter/pages/fav/post_listFav.dart';
-import 'package:playfutday_flutter/repositories/post_repositories/post_repository.dart';
-
-import '../../blocs/fav/fav_bloc.dart';
-import '../../blocs/fav/fav_event.dart';
-import '../../blocs/fav/fav_state.dart';
+import 'package:playfutday_flutter/pages/adminUser/user_list.dart';
+import 'package:playfutday_flutter/repositories/admin_repositories/admin_repository.dart';
+import '../../blocs/userListByAdmin/user_Info_bloc.dart';
+import '../../blocs/userListByAdmin/user_info_event.dart';
+import '../../blocs/userListByAdmin/user_info_state.dart';
+import '../../repositories/post_repositories/post_repository.dart';
 import '../post/bottom_loader.dart';
 
-class PostListFav extends StatefulWidget {
-  const PostListFav({Key? key, required this.user}) : super(key: key);
+class UserList extends StatefulWidget {
+  const UserList({Key? key, required this.user}) : super(key: key);
 
   final User user;
 
   @override
-  State<PostListFav> createState() => _PostListFavState();
+  State<UserList> createState() => _UserListState();
 }
 
-class _PostListFavState extends State<PostListFav> {
-  final _scrollController = ScrollController();
+class _UserListState extends State<UserList> {
   final _postRepository = PostRepository();
+  final _adminRepository = AdminRepository();
+  final _scrollController = ScrollController();
   @override
   void initState() {
     super.initState();
@@ -29,56 +31,51 @@ class _PostListFavState extends State<PostListFav> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FavBloc, FavState>(
+    return BlocBuilder<UserInfoBloc, UserInfoState>(
       builder: (context, state) {
         switch (state.status) {
-          case FavStatus.failure:
+          case UserInfoStatus.failure:
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 // ignore: prefer_const_literals_to_create_immutables
                 children: [
-                  const Icon(Icons.sports_soccer, size: 50),
+                  const Icon(Icons.person_2, size: 50),
                   const SizedBox(height: 20),
                   const Text(
-                    'You do not have any favorite posts',
+                    'You do not have any users',
                     style: TextStyle(fontSize: 20),
                   )
                 ],
               ),
             );
-          case FavStatus.success:
-            if (state.favPosts.isEmpty) {
+          case UserInfoStatus.success:
+            if (state.users.isEmpty) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Center(child: Text('Any posts found!')),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<FavBloc>().add(FavFetched());
-                    },
-                    child: const Text('Try Again'),
-                  ),
                 ],
               );
             }
             return ListView.builder(
               itemBuilder: (BuildContext context, int index) {
-                return index >= state.favPosts.length
+                return index >= state.users.length
                     ? const BottomLoader()
-                    : PostListItemFav(
-                        post: state.favPosts[index],
+                    : UserListItem(
+                        users: state.users[index],
                         postRepository: _postRepository,
+                        userAdminRepository: _adminRepository,
                         user: widget.user,
                       );
               },
               scrollDirection: Axis.vertical,
               itemCount: state.hasReachedMax
-                  ? state.favPosts.length
-                  : state.favPosts.length + 1,
+                  ? state.users.length
+                  : state.users.length + 1,
               controller: _scrollController,
             );
-          case FavStatus.initial:
+          case UserInfoStatus.initial:
             return const Center(child: CircularProgressIndicator());
         }
       },
@@ -94,7 +91,7 @@ class _PostListFavState extends State<PostListFav> {
   }
 
   void _onScroll() {
-    if (_isBottom) context.read<FavBloc>().add(FavFetched());
+    if (_isBottom) context.read<UserInfoBloc>().add(UserInfoFetched());
   }
 
   bool get _isBottom {
