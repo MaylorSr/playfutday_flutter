@@ -23,24 +23,38 @@ El proyecto trata de una red social para personas amantes al fútbol, donde esto
  
  #### A NIVEL DE VISTA DE USUARIOS ####
 - Borrar su propio post<br>
-
-
-
-
-
-
+![Alt Text](https://github.com/MaylorSr/playfutday_flutter/blob/main/Gifs/delete_post.gif)<br>
 - Publicar un comentario en un post
+![Alt Text](https://github.com/MaylorSr/playfutday_flutter/blob/main/Gifs/comment.gif)<br>
 - Dar/Quitar Like a un post
+![Alt Text]()<br>
 - Obtener sus propios posts
-- Crear cuenta de usuario
-- Logearse
-- Modificar datos de su perfil (contraseña, número de teléfono, descripción...)
+![Alt Text](https://github.com/MaylorSr/playfutday_flutter/blob/main/Gifs/myPosts.gif)<br>
+- Crear cuenta de usuario /  Logearse
+![Alt Text](https://github.com/MaylorSr/playfutday_flutter/blob/main/Gifs/crearCuenta.gif)<br>
+
 - Darse de baja
-- Obtener imágen por su nombre
+![Alt Text](https://github.com/MaylorSr/playfutday_flutter/blob/main/Gifs/unsuscribe.gif)<br>
+- Ver todos los posts
+![Alt Text](https://github.com/MaylorSr/playfutday_flutter/blob/main/Gifs/allPosts.gif)<br>
+-Ver posts favoritos
+![Alt Text](https://github.com/MaylorSr/playfutday_flutter/blob/main/Gifs/favourites.gif)<br>
  #### ADMIN ####
 -- APARTE DE TODA LAS FUNCIONALIDADES DEL ROL DE USUARIO, SE AÑADE:
 - Eliminar un post de un usuario
+![Alt Text](https://github.com/MaylorSr/playfutday_flutter/blob/main/Gifs/delete_post.gif)<br>
 - Eliminar un usuario
+![Alt Text](https://github.com/MaylorSr/playfutday_flutter/blob/main/Gifs/deleteUser.gif)<br>
+
 - Banear a un usuario para que no entre en la App
+![Alt Text](https://github.com/MaylorSr/playfutday_flutter/blob/main/Gifs/banUser.gif)<br>
+
 - Añadir/Quitar rol de **ADMIN** a un usuario
+![Alt Text](https://github.com/MaylorSr/playfutday_flutter/blob/main/Gifs/changeRol.gif)<br>
+
 - Obtener todos los usuarios que estan registrados en la App
+-![Alt Text](https://github.com/MaylorSr/playfutday_flutter/blob/main/Gifs/admin.gif)<br>
+- Ver información de un usuario
+-![Alt Text](https://github.com/MaylorSr/playfutday_flutter/blob/main/Gifs/infoUser.gif)<br>
+
+
