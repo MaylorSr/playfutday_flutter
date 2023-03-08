@@ -58,21 +58,22 @@ class AllPostBloc extends Bloc<AllPostEvent, AllPostState> {
     final deleteInProgress = state.allPost.map((post) {
       // ignore: unrelated_type_equality_checks
       return post.id == id ? state.copyWith() : post;
-    }).toList() as List<Post>;
+    }).toList();
 
+    print(deleteInProgress);
     // ignore: invalid_use_of_visible_for_testing_member
     /*emit(AllPostState.success(deleteInProgress));*/
     // ignore: invalid_use_of_visible_for_testing_member
     emit(state.copyWith(
         status: AllPostStatus.success,
-        allPost: List.of(state.allPost)..addAll(deleteInProgress),
+        allPost: state.allPost,
         hasReachedMax: false));
 
     unawaited(
       _postService.deletePost(id, userId).then((_) {
         final deleteSuccess = List.of(state.allPost)
           // ignore: unrelated_type_equality_checks
-          ..removeWhere((element) => element.id == id);
+          ..removeWhere((post) => post.id == id);
         // ignore: invalid_use_of_visible_for_testing_member
         emit(state.copyWith(allPost: deleteSuccess));
       }),

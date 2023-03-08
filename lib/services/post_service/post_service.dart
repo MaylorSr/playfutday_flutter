@@ -48,10 +48,6 @@ class PostService {
     return null;
   }
 
-  Future<Image> getImage(String imageName) async {
-    return _postRepository.getImage(imageName) as Image;
-  }
-
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

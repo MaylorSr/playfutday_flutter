@@ -54,6 +54,7 @@ class AllPostListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var urlBase = "http://localhost:8080/download/";
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Card(
@@ -63,28 +64,22 @@ class AllPostListItem extends StatelessWidget {
           children: [
             Row(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(30),
-                  child: FutureBuilder<Image>(
-                    future: postService.getImage('${post.authorFile}')
-                        as Future<Image>,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData && snapshot.data != null) {
-                        return Container(
-                          margin: EdgeInsets.symmetric(horizontal: 10.0),
-                          width: 40,
-                          height: 40,
-                          child: CircleAvatar(
-                            backgroundImage: snapshot.data!.image,
-                          ),
-                        );
-                      } else if (snapshot.hasError) {
-                        return Text('${snapshot.error}');
-                      } else {
-                        // ignore: prefer_const_constructors
-                        return CircularProgressIndicator();
-                      }
-                    },
+                ClipOval(
+                  child: Container(
+                    margin: EdgeInsetsDirectional.symmetric(horizontal: 8),
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: NetworkImage('$urlBase${post.authorFile}'),
+                        onError: (exception, stackTrace) {
+                          Image.network(
+                              'https://static.vecteezy.com/system/resources/previews/004/141/669/non_2x/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg');
+                        },
+                      ),
+                    ),
                   ),
                 ),
                 SizedBox(width: 10),
@@ -98,7 +93,7 @@ class AllPostListItem extends StatelessWidget {
                   ),
                 ),
                 Visibility(
-                  visible: post.author == user.username,
+                  visible: user.roles!.contains('ADMIN') || post.author == user.username,
                   child: Row(
                     children: [
                       IconButton(
@@ -126,9 +121,10 @@ class AllPostListItem extends StatelessWidget {
                                   ),
                                   TextButton(
                                       child: Text("Delete"),
-                                      onPressed: () => onDeletePressed(
-                                          {'$user.id'} as String,
-                                          post.id as int)),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        onDeletePressed('${user.id}', post.id!);
+                                      }),
                                 ],
                               );
                             },
@@ -144,21 +140,26 @@ class AllPostListItem extends StatelessWidget {
                 padding: const EdgeInsets.all(5.0),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: FutureBuilder<Image>(
-                    future:
-                        postService.getImage('${post.image}') as Future<Image>,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return Image(
-                          image: snapshot.data!.image,
-                          fit: BoxFit.cover,
-                        );
-                      } else if (snapshot.hasError) {
-                        return Text('${snapshot.error}');
-                      } else {
-                        return CircularProgressIndicator();
-                      }
-                    },
+                  child: Hero(
+                    tag:
+                        'image${post.id}', // un identificador único para cada imagen
+                    child: Container(
+                      width: double.infinity, // ocupa todo el ancho disponible
+                      height:
+                          400, // altura fija para mantener la proporción de la imagen
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: NetworkImage(
+                              // ignore: unnecessary_brace_in_string_interps
+                              '${urlBase}${post.image}'), // la URL de la imagen
+                          fit: BoxFit.contain,
+                          onError: (exception, stackTrace) {
+                            Image.network(
+                                'https://cdn-icons-png.flaticon.com/512/1179/1179237.png');
+                          }, // rellena el contenedor sin deformar la imagen
+                        ),
+                      ),
+                    ),
                   ),
                 )),
             Padding(
