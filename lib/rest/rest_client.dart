@@ -11,7 +11,7 @@ import 'package:playfutday_flutter/main.dart';
 import 'package:playfutday_flutter/services/localstorage_service.dart';
 
 class ApiConstants {
-  static String baseUrl = "http://localhost:8080";
+  static String baseUrl = "http://localhost:8080" /*"http://10.0.2.2:8080"*/;
 }
 
 class HeadersApiInterceptor implements InterceptorContract {
@@ -76,6 +76,31 @@ class RestClient {
       // ignore: use_rethrow_when_possible
       throw ex;
     }
+  }
+
+  Future<void> deleteP(String url) async {
+    try {
+      // ignore: unused_local_variable
+      Uri uri = Uri.parse(ApiConstants.baseUrl + url);
+
+      final response = await _httpClient.delete(uri);
+      var responseJson = _response(response);
+      return responseJson;
+    } on Exception catch (ex) {
+      // ignore: use_rethrow_when_possible
+      throw ex;
+    }
+  }
+
+  Future<http.Response> singUpPost(String url, dynamic body) async {
+    Uri uri = Uri.parse(ApiConstants.baseUrl + url);
+    final response = await http.post(uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'NoAuth'
+        },
+        body: jsonEncode(body));
+    return response;
   }
 
   dynamic _response(http.Response response) {

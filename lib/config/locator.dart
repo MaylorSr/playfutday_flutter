@@ -8,7 +8,6 @@ final getIt = GetIt.instance;
 
 @InjectableInit()
 void configureDependencies() => getIt.init();
-
 void setupAsyncDependencies() {
   getIt.registerSingletonAsync<LocalStorageService>(
       () => LocalStorageService.getInstance());

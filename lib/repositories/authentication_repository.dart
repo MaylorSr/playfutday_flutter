@@ -34,6 +34,9 @@ import 'package:injectable/injectable.dart';
 import 'package:playfutday_flutter/rest/rest.dart';
 
 import '../models/login.dart';
+import 'package:http/http.dart' as http;
+
+import '../models/register.dart';
 
 @Order(-1)
 @singleton
@@ -51,5 +54,20 @@ class AuthenticationRepository {
     var jsonResponse = await _client.post(
         url, LoginRequest(username: username, password: password));
     return LoginResponse.fromJson(jsonDecode(jsonResponse));
+  }
+
+  Future<http.Response> singUp(String username, String email, String phone,
+      String password, String verifyPassword) async {
+    String url = "/auth/register";
+
+    var jsonResponse = await _client.singUpPost(
+        url,
+        RegisterRequest(
+            username: username,
+            email: email,
+            phone: phone,
+            password: password,
+            verifyPassword: verifyPassword));
+    return jsonResponse;
   }
 }

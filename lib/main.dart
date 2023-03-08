@@ -4,6 +4,7 @@ import 'package:playfutday_flutter/pages/home_page.dart';
 import 'package:playfutday_flutter/pages/login_page.dart';
 
 import 'package:playfutday_flutter/services/authentication_service.dart';
+import 'package:playfutday_flutter/services/post_service/post_service.dart';
 
 import 'blocs/authentication/authentication_bloc.dart';
 import 'blocs/authentication/authentication_event.dart';
@@ -15,6 +16,7 @@ void main() {
   //await SharedPreferences.getInstance();
   setupAsyncDependencies();
   configureDependencies();
+
   //await getIt.allReady();
 
   runApp(BlocProvider<AuthenticationBloc>(
@@ -53,6 +55,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     //GlobalContext.ctx = context;
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Authentication Demo',
       theme: ThemeData(
         primarySwatch: Colors.teal,
@@ -64,9 +67,11 @@ class MyApp extends StatelessWidget {
             // show home page
             return HomePage(
               user: state.user,
+              postService: PostService(),
             );
           }
           // otherwise show login page
+          // ignore: prefer_const_constructors
           return LoginPage();
         },
       ),

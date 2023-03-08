@@ -2,12 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../blocs/authentication/authentication_bloc.dart';
-import '../blocs/authentication/authentication_event.dart';
-import '../blocs/authentication/authentication_state.dart';
-import '../blocs/login/login_bloc.dart';
-import '../blocs/login/login_event.dart';
-import '../blocs/login/login_state.dart';
+import 'package:playfutday_flutter/blocs/export.dart';
+import 'package:playfutday_flutter/pages/pages.dart';
 import '../config/locator.dart';
 import '../services/services.dart';
 
@@ -17,9 +13,6 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Login'),
-      ),
       body: SafeArea(
           minimum: const EdgeInsets.all(16),
           child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
@@ -38,7 +31,6 @@ class LoginPage extends StatelessWidget {
                   children: <Widget>[
                     Text(msg),
                     TextButton(
-                      //textColor: Theme.of(context).primaryColor,
                       child: Text('Retry'),
                       onPressed: () {
                         authBloc.add(AppLoaded());
@@ -126,55 +118,110 @@ class __SignInFormState extends State<_SignInForm> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'User Name',
-                      filled: true,
-                      isDense: true,
-                    ),
-                    controller: _usernameController,
-                    keyboardType: TextInputType.emailAddress,
-                    autocorrect: false,
-                    validator: (value) {
-                      if (value == null) {
-                        return 'username is required.';
-                      }
-                      return null;
-                    },
+                  // ignore: avoid_unnecessary_containers
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 20.0),
+                    child: Image.network(
+                        height: 230,
+                        'https://img.freepik.com/vector-gratis/pelota-futbol-dibujado-mano_1034-741.jpg?size=626&ext=jpg&ga=GA1.1.1911364125.1676903140&semt=ais'),
                   ),
-                  SizedBox(
-                    height: 12,
-                  ),
-                  TextFormField(
-                    // ignore: prefer_const_constructors
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      filled: true,
-                      isDense: true,
-                    ),
-                    obscureText: true,
-                    controller: _passwordController,
-                    validator: (value) {
-                      if (value == null) {
-                        return 'Password is required.';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  //RaisedButton(
-                  ElevatedButton(
-                    //color: Theme.of(context).primaryColor,
-                    //textColor: Colors.white,
-                    //padding: const EdgeInsets.all(16),
-                    //shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(8.0)),
-                    // ignore: sort_child_properties_last
-                    child: Text('LOG IN'),
-                    onPressed:
-                        state is LoginLoading ? () {} : _onLoginButtonPressed,
-                  )
+                  Text('PLAYFUTDAY',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Color.fromARGB(255, 6, 49, 122),
+                          fontSize: 38,
+                          fontWeight: FontWeight.bold)),
+                  Container(
+                      margin: const EdgeInsets.only(top: 40.0),
+                      padding: EdgeInsets.symmetric(horizontal: 20.0),
+                      child: Column(children: [
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'Username',
+                            filled: true,
+                            isDense: true,
+                          ),
+                          controller: _usernameController,
+                          keyboardType: TextInputType.name,
+                          autocorrect: false,
+                          autofocus: true,
+                          validator: (value) {
+                            if (value == null) {
+                              return 'username is required.';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(
+                          height: 35,
+                        ),
+                        TextFormField(
+                          // ignore: prefer_const_constructors
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            filled: true,
+                            isDense: true,
+                          ),
+                          obscureText: true,
+                          controller: _passwordController,
+                          validator: (value) {
+                            if (value == null) {
+                              return 'Password is required.';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        ElevatedButton(
+                          style: const ButtonStyle(
+                            backgroundColor: MaterialStatePropertyAll<Color>(
+                                Colors.transparent),
+                          ),
+                          child: Text(
+                            'You do not have count? register now',
+                            style: TextStyle(color: Colors.redAccent),
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                transitionDuration: Duration(milliseconds: 500),
+                                transitionsBuilder: (context, animation,
+                                    secondaryAnimation, child) {
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  );
+                                },
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) {
+                                  return SingUpForm();
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        //RaisedButton(
+                        ElevatedButton(
+                          style: const ButtonStyle(
+                            backgroundColor: MaterialStatePropertyAll<Color>(
+                                Color.fromARGB(255, 6, 49, 122)),
+                          ),
+                          // ignore: sort_child_properties_last
+                          child: Text(
+                            'LOG IN',
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          onPressed: state is LoginLoading
+                              ? () {}
+                              : _onLoginButtonPressed,
+                        )
+                      ]))
                 ],
               ),
             ),
