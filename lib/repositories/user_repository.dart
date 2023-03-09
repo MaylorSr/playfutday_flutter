@@ -21,4 +21,7 @@ class UserRepository {
     var jsonResponse = await _client.get(url);
     return UserResponse.fromJson(jsonDecode(jsonResponse));
   }
+
+
+  
 }

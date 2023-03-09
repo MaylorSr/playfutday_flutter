@@ -3,8 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:playfutday_flutter/blocs/export.dart';
+import 'package:playfutday_flutter/blocs/profile/profile_bloc.dart';
+import 'package:playfutday_flutter/blocs/profile/profile_event.dart';
 import 'package:playfutday_flutter/pages/pages.dart';
+import 'package:playfutday_flutter/pages/profile/view.dart';
 import 'package:playfutday_flutter/services/post_service/post_service.dart';
+import 'package:playfutday_flutter/services/user_service/user_service.dart';
 import '../blocs/bottonNavigator/bottom_navigation_bloc.dart';
 import '../models/models.dart';
 import '../models/user.dart';
@@ -12,8 +16,14 @@ import '../models/user.dart';
 class HomePage extends StatefulWidget {
   final User user;
   final PostService postService;
+  final UserService userService;
 
-  const HomePage({super.key, required this.postService, required this.user});
+  const HomePage({
+    super.key,
+    required this.postService,
+    required this.user,
+    required this.userService,
+  });
   @override
   // ignore: library_private_types_in_public_api
   _HomePageState createState() => _HomePageState();
@@ -39,7 +49,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
+        currentIndex:
+            _selectedIndex >= 0 && _selectedIndex < 2 ? _selectedIndex : 0,
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home,
@@ -50,35 +61,12 @@ class _HomePageState extends State<HomePage> {
             backgroundColor: Color.fromARGB(255, 135, 7, 255),
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.add,
+              icon: Icon(Icons.person,
                   color: _selectedIndex == 1
                       ? Color.fromARGB(255, 0, 153, 255)
                       : Colors.grey),
-              label: '',
-              backgroundColor: Color.fromARGB(255, 135, 7, 255)),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.favorite,
-                  color: _selectedIndex == 2
-                      ? Color.fromARGB(255, 0, 153, 255)
-                      : Colors.grey),
-              label: 'Fav',
-              backgroundColor: Color.fromARGB(255, 135, 7, 255)),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person,
-                  color: _selectedIndex == 3
-                      ? Color.fromARGB(255, 0, 153, 255)
-                      : Colors.grey),
               label: 'Profile',
-              backgroundColor: Color.fromARGB(255, 135, 7, 255)),/*
-          if (widget.user.roles?.contains('ADMIN') ?? false)
-            BottomNavigationBarItem(
-              icon: Icon(Icons.admin_panel_settings,
-                  color: _selectedIndex == 4
-                      ? Color.fromARGB(255, 0, 153, 255)
-                      : Colors.grey),
-              label: 'Search',
-              backgroundColor: Color.fromARGB(255, 135, 7, 255),
-            ),*/
+              backgroundColor: Color.fromARGB(255, 135, 7, 255))
         ],
         onTap: (index) {
           setState(() {
@@ -116,77 +104,24 @@ class _HomePageState extends State<HomePage> {
                         return LoginPage();
                       }
                     },
-                  )); /*
-            case 1:
-              return BlocProvider(
-                create: (_) => PhotoBloc(),
-                child: MaterialApp(
-                  initialRoute: routeHome,
-                  onGenerateRoute: RouteGenerator.generateRoute,
-                ),
-              );
-            case 2:
-              return Scaffold(
-                  appBar: AppBar(
-                    backgroundColor: Colors.white,
-                    title: Text('PlayFutDay',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontStyle: FontStyle.italic,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600)),
-                  ),
-                  body: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-                    builder: (context, state) {
-                      if (state is AuthenticationAuthenticated) {
-                        return BlocProvider(
-                            create: (_) => FavBloc(widget.postRepository)
-                              ..add(FavFetched()),
-                            child: PostListFav(
-                              user: state.user,
-                            ));
-                      } else {
-                        return LoginPage();
-                      }
-                    },
                   ));
-            case 3:
-              return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+            case 1:
+              return Scaffold(
+                  body: BlocBuilder<AuthenticationBloc, AuthenticationState>(
                 builder: (context, state) {
                   if (state is AuthenticationAuthenticated) {
-                    return ProfileScreen(
-                      user: state.user,
-                      postRepository: PostRepository(),
-                      adminRepository: AdminRepository(),
-                    );
+                    return BlocProvider(
+                        create: (_) => ProfileBloc(widget.userService)
+                          ..add(ProfileFetched()),
+                        child: ProfileUser(
+                          user: state.user,
+                        ));
                   } else {
                     return LoginPage();
                   }
                 },
-              );
-            case 4:
-              return Scaffold(
-                  appBar: AppBar(
-                    backgroundColor: Colors.white,
-                    title: Text('PlayFutDay',
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontStyle: FontStyle.italic,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600)),
-                  ),
-                  body: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-                    builder: (context, state) {
-                      if (state is AuthenticationAuthenticated) {
-                        return BlocProvider(
-                            create: (_) => UserInfoBloc(widget.adminRepository)
-                              ..add(UserInfoFetched()),
-                            child: UserList(user: state.user));
-                      } else {
-                        return LoginPage();
-                      }
-                    },
-                  ));*/
+              ));
+
             default:
               return Container();
           }

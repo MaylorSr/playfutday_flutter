@@ -5,6 +5,7 @@ import 'package:playfutday_flutter/pages/login_page.dart';
 
 import 'package:playfutday_flutter/services/authentication_service.dart';
 import 'package:playfutday_flutter/services/post_service/post_service.dart';
+import 'package:playfutday_flutter/services/user_service/user_service.dart';
 
 import 'blocs/authentication/authentication_bloc.dart';
 import 'blocs/authentication/authentication_event.dart';
@@ -68,6 +69,7 @@ class MyApp extends StatelessWidget {
             return HomePage(
               user: state.user,
               postService: PostService(),
+              userService: UserService(),
             );
           }
           // otherwise show login page
