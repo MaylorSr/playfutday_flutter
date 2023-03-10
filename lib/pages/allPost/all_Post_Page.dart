@@ -77,9 +77,10 @@ class _AllPostListState extends State<AllPostList> {
                               .read<AllPostBloc>()
                               .sendCommentarie(message, idPost);
                         },
-                        onSendLikePressed: (idPost) {
-                          context.read<AllPostBloc>().sendLike(idPost);
-                        });
+                        onSendLikedPressed: (idPost) {
+                          context.read<AllPostBloc>().sendLiked(idPost);
+                        },
+                      );
               },
               scrollDirection: Axis.vertical,
               itemCount: state.hasReachedMax

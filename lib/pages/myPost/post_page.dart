@@ -73,10 +73,7 @@ class _AllPostListState extends State<MyPostList> {
                         onDeletePressed: (userId, id) {
                           context.read<MyPostBloc>().deletePost(userId, id);
                         },
-                        onSendCommentariePressed: (message, idPost) {},
-                        onSendLikePressed: (idPost) {
-                          context.read<MyPostBloc>().sendLike(idPost);
-                        },
+                        onSendCommentariePressed: (message, idPost) {}, onSendLikedPressed: (int ) {  },
                       );
               },
               scrollDirection: Axis.vertical,

@@ -1,65 +1,40 @@
 // ignore_for_file: prefer_const_constructors, no_leading_underscores_for_local_identifiers, library_private_types_in_public_api, non_constant_identifier_names, unnecessary_overrides
 
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:playfutday_flutter/models/models.dart';
 import 'package:playfutday_flutter/services/post_service/post_service.dart';
 
-class LikeButton extends StatefulWidget {
-  const LikeButton(
-      {Key? key, required this.idPost, required this.onSendLikePressed})
-      : super(key: key);
-  final int idPost;
-  final void Function(int) onSendLikePressed;
-
-  @override
-  // ignore: library_private_types_in_public_api
-  _LikeButtonState createState() => _LikeButtonState();
-}
-
-class _LikeButtonState extends State<LikeButton> {
-  bool _isLiked = false;
-  final _postService = PostService();
-  final int idPost = 1;
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        setState(() {
-          Navigator.pop(context);
-          widget.onSendLikePressed(widget.idPost);
-          _postService.postLikeByMe(widget.idPost);
-          _isLiked = !_isLiked;
-        });
-      },
-      child: Icon(
-        _isLiked ? Icons.favorite : Icons.favorite_border,
-        color: _isLiked ? Colors.red : null,
-      ),
-    );
-  }
-}
-
-class AllPostListItem extends StatelessWidget {
+class AllPostListItem extends StatefulWidget {
   final User user;
-  const AllPostListItem({
-    Key? key,
-    required this.post,
-    required this.postService,
-    required this.user,
-    required this.onDeletePressed,
-    required this.onSendCommentariePressed,
-    required this.onSendLikePressed,
-  }) : super(key: key);
-
   final Post post;
   final PostService postService;
   final void Function(String, int) onDeletePressed;
   final void Function(String, int) onSendCommentariePressed;
-  final void Function(int) onSendLikePressed;
+  final void Function(int) onSendLikedPressed;
 
-  // ignore: prefer_typing_uninitialized_variables
+  const AllPostListItem({
+    Key? key,
+    required this.user,
+    required this.post,
+    required this.postService,
+    required this.onDeletePressed,
+    required this.onSendCommentariePressed,
+    required this.onSendLikedPressed,
+  }) : super(key: key);
+
+  @override
+  _AllPostListItemState createState() => _AllPostListItemState();
+}
+
+class _AllPostListItemState extends State<AllPostListItem> {
+  late bool _isLiked;
+
+  @override
+  void initState() {
+    super.initState();
+    _isLiked =
+        widget.post.likesByAuthor?.contains(widget.user.username) ?? false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +57,8 @@ class AllPostListItem extends StatelessWidget {
                       shape: BoxShape.circle,
                       image: DecorationImage(
                         fit: BoxFit.cover,
-                        image: NetworkImage('$urlBase${post.authorFile}'),
+                        image:
+                            NetworkImage('$urlBase${widget.post.authorFile}'),
                         onError: (exception, stackTrace) {
                           Image.network(
                               'https://static.vecteezy.com/system/resources/previews/004/141/669/non_2x/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg');
@@ -94,7 +70,7 @@ class AllPostListItem extends StatelessWidget {
                 SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    '${post.author}',
+                    '${widget.post.author}',
                     // ignore: prefer_const_constructors
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -102,8 +78,8 @@ class AllPostListItem extends StatelessWidget {
                   ),
                 ),
                 Visibility(
-                  visible: user.roles!.contains('ADMIN') ||
-                      post.author == user.username,
+                  visible: widget.user.roles!.contains('ADMIN') ||
+                      widget.post.author == widget.user.username,
                   child: Row(
                     children: [
                       IconButton(
@@ -133,7 +109,9 @@ class AllPostListItem extends StatelessWidget {
                                       child: Text("Delete"),
                                       onPressed: () {
                                         Navigator.pop(context);
-                                        onDeletePressed('${user.id}', post.id!);
+                                        widget.onDeletePressed(
+                                            '${widget.user.id}',
+                                            widget.post.id!);
                                       }),
                                 ],
                               );
@@ -152,7 +130,7 @@ class AllPostListItem extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                   child: Hero(
                     tag:
-                        'image${post.id}', // un identificador único para cada imagen
+                        'image${widget.post.id}', // un identificador único para cada imagen
                     child: Container(
                       width: double.infinity, // ocupa todo el ancho disponible
                       height:
@@ -161,7 +139,7 @@ class AllPostListItem extends StatelessWidget {
                         image: DecorationImage(
                           image: NetworkImage(
                               // ignore: unnecessary_brace_in_string_interps
-                              '${urlBase}${post.image}'), // la URL de la imagen
+                              '${urlBase}${widget.post.image}'), // la URL de la imagen
                           fit: BoxFit.contain,
                           onError: (exception, stackTrace) {
                             Image.network(
@@ -184,14 +162,26 @@ class AllPostListItem extends StatelessWidget {
                         width: 8,
                       ),
                       Text(
-                        '${post.tag}',
+                        '${widget.post.tag}',
                         style: TextStyle(
                             fontSize: 16,
                             fontStyle: FontStyle.italic,
                             fontWeight: FontWeight.w400),
                       ),
-                      LikeButton(
-                        idPost: int.parse('${post.id}'),
+                      InkWell(
+                        child: IconButton(
+                          icon: Icon(
+                            _isLiked ? Icons.favorite : Icons.favorite_border,
+                            color: _isLiked ? Colors.red : null,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isLiked = !_isLiked;
+                            });
+                            widget.onSendLikedPressed(
+                                int.parse('${widget.post.id}'));
+                          },
+                        ),
                       ),
                       SizedBox(width: 16),
                       InkWell(
@@ -201,7 +191,7 @@ class AllPostListItem extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (context) => CommentDialog(
                                 // ignore: avoid_types_as_parameter_names
-                                post: post, postService: PostService(),
+                                post: widget.post, postService: PostService(),
                                 onSendCommentariePressed: (String, int) {},
                               ),
                               fullscreenDialog: true,
@@ -215,7 +205,7 @@ class AllPostListItem extends StatelessWidget {
                       ),
                       SizedBox(width: 8),
                       Text(
-                        '${post.commentaries == null ? '' : post.commentaries!.length} ',
+                        '${widget.post.commentaries == null ? '' : widget.post.commentaries!.length} ',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
@@ -228,7 +218,7 @@ class AllPostListItem extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Text('${post.uploadDate}'),
+              child: Text('${widget.post.uploadDate}'),
             )
           ],
         ),

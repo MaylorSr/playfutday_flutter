@@ -1,10 +1,11 @@
-// ignore_for_file: unused_local_variable
+// ignore_for_file: unused_local_variable, avoid_print
 
 import 'dart:async';
 
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_form_bloc/flutter_form_bloc.dart';
 import 'package:playfutday_flutter/blocs/allPost/allPost_state.dart';
+import 'package:playfutday_flutter/models/allPost.dart';
 import 'package:playfutday_flutter/services/post_service/post_service.dart';
 import 'package:stream_transform/stream_transform.dart';
 
@@ -63,8 +64,6 @@ class AllPostBloc extends Bloc<AllPostEvent, AllPostState> {
 
     print(deleteInProgress);
     // ignore: invalid_use_of_visible_for_testing_member
-    /*emit(AllPostState.success(deleteInProgress));*/
-    // ignore: invalid_use_of_visible_for_testing_member
     emit(state.copyWith(
         status: AllPostStatus.success,
         allPost: state.allPost,
@@ -81,55 +80,40 @@ class AllPostBloc extends Bloc<AllPostEvent, AllPostState> {
     );
   }
 
-  Future<void> sendCommentarie(String message, int idPost) async {
-    final sendCommentarieInProgress = state.allPost.map((post) {
-      // ignore: unrelated_type_equality_checks
-      return post.id == idPost ? state.copyWith() : post;
-    }).toList();
+  Future<void> sendLiked(int id) async {
+    final updatedPosts = await _postService.postLikeByMe(id);
 
-    print(sendCommentarieInProgress);
-    // ignore: invalid_use_of_visible_for_testing_member
-    /*emit(AllPostState.success(deleteInProgress));*/
-    // ignore: invalid_use_of_visible_for_testing_member
+    print(updatedPosts);
+    if (updatedPosts == null) {
+      throw Exception('No se pudo actualizar el post con ID $id');
+    }
+
+    final updatedPostIndex = state.allPost.indexWhere((post) => post.id == id);
+    final updatedAllPost = List<Post>.from(state.allPost);
+    updatedAllPost[updatedPostIndex] = updatedPosts;
+
     emit(state.copyWith(
-        status: AllPostStatus.success,
-        allPost: state.allPost,
-        hasReachedMax: false));
-
-    unawaited(
-      _postService.sendCommentaries(message, idPost).then((_) {
-        final sendCommentariesSuccess = List.of(state.allPost)
-          // ignore: unrelated_type_equality_checks
-          ..removeWhere((post) => post.id == idPost);
-        // ignore: invalid_use_of_visible_for_testing_member
-        emit(state.copyWith(allPost: sendCommentariesSuccess));
-      }),
-    );
+      allPost: updatedAllPost,
+    ));
   }
 
-  Future<void> sendLike(idPost) async {
-    final sendLikeInProgress = state.allPost.map((post) {
-      // ignore: unrelated_type_equality_checks
-      return post.id == idPost ? state.copyWith() : post;
-    }).toList();
-
-    print(sendLikeInProgress);
+  Future<void> sendCommentarie(String message, int idPost) async {
+    // Actualiza el estado para mostrar que se está enviando el comentario
     // ignore: invalid_use_of_visible_for_testing_member
-    /*emit(AllPostState.success(deleteInProgress));*/
+    emit(state.copyWith(status: AllPostStatus.initial));
+
+    // Envía el comentario
+    await _postService.sendCommentaries(message, idPost);
+
+    // Recupera la lista actualizada del servicio
+    final updatedList = await _postService.getAllPosts();
+
+    // Actualiza el estado con la lista actualizada
     // ignore: invalid_use_of_visible_for_testing_member
     emit(state.copyWith(
-        status: AllPostStatus.success,
-        allPost: state.allPost,
-        hasReachedMax: false));
-
-    unawaited(
-      _postService.postLikeByMe(idPost).then((_) {
-        final sendLikeSucces = List.of(state.allPost)
-          // ignore: unrelated_type_equality_checks
-          ..removeWhere((post) => post.id == idPost);
-        // ignore: invalid_use_of_visible_for_testing_member
-        emit(state.copyWith(allPost: sendLikeSucces));
-      }),
-    );
+      status: AllPostStatus.success,
+      allPost: updatedList!.content,
+      hasReachedMax: false,
+    ));
   }
 }

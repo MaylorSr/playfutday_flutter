@@ -47,11 +47,11 @@ class PostRepository {
     var jsonResponse = await _client.deleteP(url);
   }
 
-  Future<void> postLike(int idPost) async {
+  Future<Post> postLike(int idPost) async {
     String url = "/post/like/$idPost";
 
     var jsonResponse = await _client.post(url, jsonEncode(idPost));
-    return jsonResponse;
+    return Post.fromJson(jsonDecode(jsonResponse));
   }
 
   Future<dynamic> sendComment(String message, int idPost) async {

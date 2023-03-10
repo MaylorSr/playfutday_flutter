@@ -1,5 +1,7 @@
 // ignore_for_file: file_names
 
+import 'package:equatable/equatable.dart';
+
 class PostResponse {
   late final List<Post> content;
   late int totalPages;
@@ -27,7 +29,8 @@ class PostResponse {
   }
 }
 
-class Post {
+// ignore: must_be_immutable
+class Post extends Equatable {
   int? id;
   String? tag;
   String? description;
@@ -62,7 +65,7 @@ class Post {
     author = json['author'];
     idAuthor = json['idAuthor'];
     authorFile = json['authorFile'];
-    likesByAuthor = json['likesByAuthor'];
+    likesByAuthor = (json['likesByAuthor'] != null) ?  likesByAuthor = (json['likesByAuthor'] as List<dynamic>).cast<String>() : likesByAuthor = (json['likesByAuthor']);
     countLikes = json['countLikes'];
 
     if (json['commentaries'] != null) {
@@ -90,6 +93,35 @@ class Post {
     }
     return data;
   }
+
+  Post copyWith(
+      int? id,
+      String? tag,
+      String? description,
+      String? image,
+      String? uploadDate,
+      String? author,
+      String? idAuthor,
+      String? authorFile,
+      List<String>? likesByAuthor,
+      int? countLikes,
+      List<Commentaries>? commentaries) {
+    return Post(
+        id: id ?? this.id,
+        tag: tag ?? this.tag,
+        description: description ?? this.description,
+        image: image ?? this.image,
+        uploadDate: uploadDate ?? this.uploadDate,
+        author: author ?? this.author,
+        idAuthor: idAuthor ?? this.idAuthor,
+        authorFile: authorFile ?? this.authorFile,
+        likesByAuthor: likesByAuthor ?? this.likesByAuthor,
+        countLikes: countLikes ?? this.countLikes,
+        commentaries: commentaries ?? this.commentaries);
+  }
+
+  @override
+  List<Object> get props => [];
 }
 
 class Commentaries {

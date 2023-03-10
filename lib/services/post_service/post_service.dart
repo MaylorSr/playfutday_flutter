@@ -1,4 +1,4 @@
-// ignore_for_file: override_on_non_overriding_member
+// ignore_for_file: override_on_non_overriding_member, avoid_print
 
 import 'package:playfutday_flutter/models/models.dart';
 
@@ -81,11 +81,14 @@ class PostService {
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 
-  Future<void> postLikeByMe(int idPost) async {
+  Future<Post?> postLikeByMe(int idPost) async {
     String? token = _localStorageService.getFromDisk('user_token');
     if (token != null) {
-      await _postRepository.postLike(idPost);
+      Post p = await _postRepository.postLike(idPost);
+      print(p);
+      return p;
     }
+    return null;
   }
 
   Future<dynamic> sendCommentaries(String message, int idPost) async {
