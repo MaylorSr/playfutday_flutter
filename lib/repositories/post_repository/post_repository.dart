@@ -54,11 +54,11 @@ class PostRepository {
     return Post.fromJson(jsonDecode(jsonResponse));
   }
 
-  Future<dynamic> sendComment(String message, int idPost) async {
+  Future<Post> sendComment(String message, int idPost) async {
     String url = "/post/commentary/$idPost";
 
     var jsonResponse =
         await _client.post(url, jsonEncode({'message': message}));
-    return jsonResponse;
+    return Post.fromJson(jsonDecode(jsonResponse));
   }
 }

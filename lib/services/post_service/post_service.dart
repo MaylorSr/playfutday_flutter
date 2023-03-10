@@ -91,10 +91,14 @@ class PostService {
     return null;
   }
 
-  Future<dynamic> sendCommentaries(String message, int idPost) async {
+  Future<Post?> sendCommentaries(String message, int idPost) async {
     String? token = _localStorageService.getFromDisk('user_token');
+
     if (token != null) {
-      await _postRepository.sendComment(message, idPost);
+      Post p = await _postRepository.sendComment(message, idPost);
+      print(p);
+      return p;
     }
+    return null;
   }
 }

@@ -92,6 +92,7 @@ class AllPostBloc extends Bloc<AllPostEvent, AllPostState> {
     final updatedAllPost = List<Post>.from(state.allPost);
     updatedAllPost[updatedPostIndex] = updatedPosts;
 
+    // ignore: invalid_use_of_visible_for_testing_member
     emit(state.copyWith(
       allPost: updatedAllPost,
     ));

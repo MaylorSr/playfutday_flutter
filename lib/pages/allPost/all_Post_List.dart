@@ -28,12 +28,14 @@ class AllPostListItem extends StatefulWidget {
 
 class _AllPostListItemState extends State<AllPostListItem> {
   late bool _isLiked;
+  late int _likesCount;
 
   @override
   void initState() {
     super.initState();
     _isLiked =
         widget.post.likesByAuthor?.contains(widget.user.username) ?? false;
+    _likesCount = widget.post.countLikes!;
   }
 
   @override
@@ -168,20 +170,28 @@ class _AllPostListItemState extends State<AllPostListItem> {
                             fontStyle: FontStyle.italic,
                             fontWeight: FontWeight.w400),
                       ),
-                      InkWell(
-                        child: IconButton(
-                          icon: Icon(
-                            _isLiked ? Icons.favorite : Icons.favorite_border,
-                            color: _isLiked ? Colors.red : null,
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              _isLiked ? Icons.favorite : Icons.favorite_border,
+                              color: _isLiked ? Colors.red : null,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isLiked = !_isLiked;
+                                if (_isLiked) {
+                                  _likesCount++;
+                                } else {
+                                  _likesCount--;
+                                }
+                              });
+                              widget.onSendLikedPressed(
+                                  int.parse('${widget.post.id}'));
+                            },
                           ),
-                          onPressed: () {
-                            setState(() {
-                              _isLiked = !_isLiked;
-                            });
-                            widget.onSendLikedPressed(
-                                int.parse('${widget.post.id}'));
-                          },
-                        ),
+                          Text('$_likesCount'),
+                        ],
                       ),
                       SizedBox(width: 16),
                       InkWell(
