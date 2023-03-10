@@ -12,6 +12,7 @@ import 'package:playfutday_flutter/services/user_service/user_service.dart';
 import '../blocs/bottonNavigator/bottom_navigation_bloc.dart';
 import '../models/models.dart';
 import '../models/user.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 class HomePage extends StatefulWidget {
   final User user;
@@ -48,25 +49,15 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex:
-            _selectedIndex >= 0 && _selectedIndex < 2 ? _selectedIndex : 0,
+      bottomNavigationBar: CurvedNavigationBar(
+        index: _selectedIndex,
+        backgroundColor: Color.fromARGB(255, 3, 25, 151),
+        color: Colors.white,
+        buttonBackgroundColor: Color.fromARGB(255, 255, 255, 255),
+        height: 50,
         items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home,
-                color: _selectedIndex == 0
-                    ? Color.fromARGB(255, 0, 153, 255)
-                    : Colors.grey),
-            label: 'Home',
-            backgroundColor: Color.fromARGB(255, 135, 7, 255),
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person,
-                  color: _selectedIndex == 1
-                      ? Color.fromARGB(255, 0, 153, 255)
-                      : Colors.grey),
-              label: 'Profile',
-              backgroundColor: Color.fromARGB(255, 135, 7, 255))
+          Icon(Icons.home, size: 20),
+          Icon(Icons.person, size: 20),
         ],
         onTap: (index) {
           setState(() {
@@ -107,20 +98,22 @@ class _HomePageState extends State<HomePage> {
                   ));
             case 1:
               return Scaffold(
+                  backgroundColor: Colors.black,
                   body: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-                builder: (context, state) {
-                  if (state is AuthenticationAuthenticated) {
-                    return BlocProvider(
-                        create: (_) => ProfileBloc(widget.userService)
-                          ..add(ProfileFetched()),
-                        child: ProfileUser(
-                          user: state.user,
-                        ));
-                  } else {
-                    return LoginPage();
-                  }
-                },
-              ));
+                    builder: (context, state) {
+                      if (state is AuthenticationAuthenticated) {
+                        return BlocProvider(
+                            create: (_) => ProfileBloc(widget.userService)
+                              ..add(ProfileFetched()),
+                            child: ProfileUser(
+                              user: state.user,
+                              postService: PostService(),
+                            ));
+                      } else {
+                        return LoginPage();
+                      }
+                    },
+                  ));
 
             default:
               return Container();

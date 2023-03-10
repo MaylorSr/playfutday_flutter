@@ -1,5 +1,3 @@
-// ignore_for_file: unused_local_variable
-
 import 'dart:async';
 
 import 'package:bloc_concurrency/bloc_concurrency.dart';
@@ -8,7 +6,8 @@ import 'package:playfutday_flutter/blocs/allPost/allPost_state.dart';
 import 'package:playfutday_flutter/services/post_service/post_service.dart';
 import 'package:stream_transform/stream_transform.dart';
 
-import 'allPost_event.dart';
+import '../allPost/allPost_event.dart';
+
 
 const throttleDuration = Duration(milliseconds: 100);
 int page = -1;
@@ -19,8 +18,8 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
   };
 }
 
-class AllPostBloc extends Bloc<AllPostEvent, AllPostState> {
-  AllPostBloc(this._postService) : super(const AllPostState()) {
+class MyPostBloc extends Bloc<AllPostEvent, AllPostState> {
+  MyPostBloc(this._postService) : super(const AllPostState()) {
     on<AllPostFetched>(
       _onAllPostFetched,
       transformer: throttleDroppable(throttleDuration),
@@ -36,7 +35,7 @@ class AllPostBloc extends Bloc<AllPostEvent, AllPostState> {
     try {
       if (state.status == AllPostStatus.initial) {
         page = 0;
-        final allPost = await _postService.getAllPosts(page);
+        final allPost = await _postService.getMyPosts(page);
         return emitter(state.copyWith(
           status: AllPostStatus.success,
           allPost: allPost!.content,
@@ -44,7 +43,7 @@ class AllPostBloc extends Bloc<AllPostEvent, AllPostState> {
         ));
       }
       page += 1;
-      final allPost = await _postService.getAllPosts(page);
+      final allPost = await _postService.getMyPosts(page);
 
       emitter(state.copyWith(
           status: AllPostStatus.success,
@@ -61,6 +60,7 @@ class AllPostBloc extends Bloc<AllPostEvent, AllPostState> {
       return post.id == id ? state.copyWith() : post;
     }).toList();
 
+    // ignore: avoid_print
     print(deleteInProgress);
     // ignore: invalid_use_of_visible_for_testing_member
     /*emit(AllPostState.success(deleteInProgress));*/
@@ -80,6 +80,8 @@ class AllPostBloc extends Bloc<AllPostEvent, AllPostState> {
       }),
     );
   }
+
+  
 
   Future<void> sendCommentarie(String message, int idPost) async {
     final sendCommentarieInProgress = state.allPost.map((post) {

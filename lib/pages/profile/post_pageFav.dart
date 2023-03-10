@@ -1,24 +1,27 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:playfutday_flutter/blocs/export.dart';
-import 'package:playfutday_flutter/services/post_service/post_service.dart';
+import 'package:playfutday_flutter/models/models.dart';
+import 'package:playfutday_flutter/pages/profile/post_listFav.dart';
+import 'package:playfutday_flutter/services/services.dart';
 
-import '../../models/user.dart';
-import 'all_Post_List.dart';
-import 'bottom_loader.dart';
+import '../../blocs/favPost/fav_Post_event.dart';
+import '../../blocs/favPost/fav_Post_state.dart';
+import '../../blocs/favPost/fav_post_bloc.dart';
+import '../allPost/bottom_loader.dart';
 
-class AllPostList extends StatefulWidget {
-  const AllPostList({Key? key, required this.user}) : super(key: key);
+class PostListFav extends StatefulWidget {
+  const PostListFav({Key? key, required this.user}) : super(key: key);
 
   final User user;
 
   @override
-  State<AllPostList> createState() => _AllPostListState();
+  State<PostListFav> createState() => _PostListFavState();
 }
 
-class _AllPostListState extends State<AllPostList> {
+class _PostListFavState extends State<PostListFav> {
   final _scrollController = ScrollController();
-  // ignore: unused_field
   final _postService = PostService();
   @override
   void initState() {
@@ -28,66 +31,59 @@ class _AllPostListState extends State<AllPostList> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AllPostBloc, AllPostState>(
+    return BlocBuilder<FavBloc, FavState>(
       builder: (context, state) {
         switch (state.status) {
-          case AllPostStatus.failure:
+          case FavStatus.failure:
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 // ignore: prefer_const_literals_to_create_immutables
                 children: [
-                  const Icon(Icons.sports_soccer, size: 50),
+                  const Icon(Icons.sports_soccer, size: 50, color: Colors.white,),
                   const SizedBox(height: 20),
-                  const Text(
-                    'Not found any posts',
-                    style: TextStyle(fontSize: 20),
-                  )
+                  const Text('Any favorite posts',
+                      style: TextStyle(color: Colors.white, fontSize: 20))
                 ],
               ),
             );
-          case AllPostStatus.success:
-            if (state.allPost.isEmpty) {
+          case FavStatus.success:
+            if (state.favPosts.isEmpty) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Center(child: Text('Any posts found!')),
+                  const Center(
+                      child: Text('Any posts found!',
+                          style: TextStyle(color: Colors.white))),
                   ElevatedButton(
                     onPressed: () {
-                      context.read<AllPostBloc>().add(AllPostFetched());
+                      context.read<FavBloc>().add(FavFetched());
                     },
-                    child: const Text('Try Again'),
+                    child: const Text('Try Again',
+                        style: TextStyle(color: Colors.white)),
                   ),
                 ],
               );
             }
             return ListView.builder(
               itemBuilder: (BuildContext context, int index) {
-                return index >= state.allPost.length
+                return index >= state.favPosts.length
                     ? const BottomLoader()
-                    : AllPostListItem(
-                        post: state.allPost[index],
+                    : PostListItemFav(
+                        post: state.favPosts[index],
                         postService: _postService,
                         user: widget.user,
                         onDeletePressed: (userId, id) {
-                          context.read<AllPostBloc>().deletePost(userId, id);
-                        },
-                        onSendCommentariePressed: (message, idPost) {
-                          context
-                              .read<AllPostBloc>()
-                              .sendCommentarie(message, idPost);
-                        },
-                        onSendLikePressed: (idPost) {
-                          context.read<AllPostBloc>().sendLike(idPost);
+                          context.read<FavBloc>().deletePost(userId, id);
                         });
               },
               scrollDirection: Axis.vertical,
               itemCount: state.hasReachedMax
-                  ? state.allPost.length
-                  : state.allPost.length + 1,
+                  ? state.favPosts.length
+                  : state.favPosts.length + 1,
               controller: _scrollController,
             );
-          case AllPostStatus.initial:
+          case FavStatus.initial:
             return const Center(child: CircularProgressIndicator());
         }
       },
@@ -103,7 +99,7 @@ class _AllPostListState extends State<AllPostList> {
   }
 
   void _onScroll() {
-    if (_isBottom) context.read<AllPostBloc>().add(AllPostFetched());
+    if (_isBottom) context.read<FavBloc>().add(FavFetched());
   }
 
   bool get _isBottom {

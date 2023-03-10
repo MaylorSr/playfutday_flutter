@@ -3,20 +3,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:playfutday_flutter/blocs/export.dart';
 import 'package:playfutday_flutter/services/post_service/post_service.dart';
 
+import '../../blocs/myPost/myPost_bloc.dart';
 import '../../models/user.dart';
-import 'all_Post_List.dart';
-import 'bottom_loader.dart';
+import '../allPost/all_Post_List.dart';
+import '../allPost/bottom_loader.dart';
 
-class AllPostList extends StatefulWidget {
-  const AllPostList({Key? key, required this.user}) : super(key: key);
+class MyPostList extends StatefulWidget {
+  const MyPostList({Key? key, required this.user}) : super(key: key);
 
   final User user;
 
   @override
-  State<AllPostList> createState() => _AllPostListState();
+  State<MyPostList> createState() => _AllPostListState();
 }
 
-class _AllPostListState extends State<AllPostList> {
+class _AllPostListState extends State<MyPostList> {
   final _scrollController = ScrollController();
   // ignore: unused_field
   final _postService = PostService();
@@ -28,7 +29,7 @@ class _AllPostListState extends State<AllPostList> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AllPostBloc, AllPostState>(
+    return BlocBuilder<MyPostBloc, AllPostState>(
       builder: (context, state) {
         switch (state.status) {
           case AllPostStatus.failure:
@@ -54,7 +55,7 @@ class _AllPostListState extends State<AllPostList> {
                   const Center(child: Text('Any posts found!')),
                   ElevatedButton(
                     onPressed: () {
-                      context.read<AllPostBloc>().add(AllPostFetched());
+                      context.read<MyPostBloc>().add(AllPostFetched());
                     },
                     child: const Text('Try Again'),
                   ),
@@ -70,16 +71,13 @@ class _AllPostListState extends State<AllPostList> {
                         postService: _postService,
                         user: widget.user,
                         onDeletePressed: (userId, id) {
-                          context.read<AllPostBloc>().deletePost(userId, id);
+                          context.read<MyPostBloc>().deletePost(userId, id);
                         },
-                        onSendCommentariePressed: (message, idPost) {
-                          context
-                              .read<AllPostBloc>()
-                              .sendCommentarie(message, idPost);
-                        },
+                        onSendCommentariePressed: (message, idPost) {},
                         onSendLikePressed: (idPost) {
-                          context.read<AllPostBloc>().sendLike(idPost);
-                        });
+                          context.read<MyPostBloc>().sendLike(idPost);
+                        },
+                      );
               },
               scrollDirection: Axis.vertical,
               itemCount: state.hasReachedMax
@@ -103,7 +101,7 @@ class _AllPostListState extends State<AllPostList> {
   }
 
   void _onScroll() {
-    if (_isBottom) context.read<AllPostBloc>().add(AllPostFetched());
+    if (_isBottom) context.read<MyPostBloc>().add(AllPostFetched());
   }
 
   bool get _isBottom {

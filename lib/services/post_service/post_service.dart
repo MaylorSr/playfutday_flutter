@@ -3,6 +3,7 @@
 import 'package:playfutday_flutter/models/models.dart';
 
 import 'package:playfutday_flutter/repositories/post_repository/post_repository.dart';
+import '../../models/favPost.dart';
 import '../localstorage_service.dart';
 
 import 'package:flutter/material.dart';
@@ -39,6 +40,35 @@ class PostService {
     return null;
   }
 
+  @override
+  Future<PostResponse?> getMyPosts([int page = 0]) async {
+    // ignore: avoid_print
+    print("get my posts");
+    String? token = _localStorageService.getFromDisk("user_token");
+    if (token != null) {
+      PostResponse response = await _postRepository.myAllPost(page);
+      // ignore: avoid_print
+      print(response.content);
+      return response;
+    }
+    return null;
+  }
+
+  @override
+  Future<PostFavResponse?> fetchPostsFav([int page = 0]) async {
+    // ignore: avoid_print
+    print("get fav posts");
+    String? token = _localStorageService.getFromDisk("user_token");
+    if (token != null) {
+      PostFavResponse response = await _postRepository.allFavPost(page);
+      // ignore: avoid_print
+      print(response.totalPages);
+      print(response.content);
+      return response;
+    }
+    return null;
+  }
+
   Future<void> deletePost(int idPost, String userId) async {
     String? token = _localStorageService.getFromDisk('user_token');
     if (token != null) {
@@ -50,4 +80,18 @@ class PostService {
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+
+  Future<void> postLikeByMe(int idPost) async {
+    String? token = _localStorageService.getFromDisk('user_token');
+    if (token != null) {
+      await _postRepository.postLike(idPost);
+    }
+  }
+
+  Future<dynamic> sendCommentaries(String message, int idPost) async {
+    String? token = _localStorageService.getFromDisk('user_token');
+    if (token != null) {
+      await _postRepository.sendComment(message, idPost);
+    }
+  }
 }

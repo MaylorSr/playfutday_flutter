@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:injectable/injectable.dart';
+import 'package:playfutday_flutter/models/favPost.dart';
 import 'package:playfutday_flutter/models/models.dart';
 
 import '../../config/locator.dart';
@@ -24,10 +24,41 @@ class PostRepository {
     return PostResponse.fromJson(jsonDecode(jsonResponse));
   }
 
+  Future<PostResponse> myAllPost([int index = 0]) async {
+    String url = "/post/user?page=$index";
+
+    var jsonResponse = await _client.get(url);
+
+    return PostResponse.fromJson(jsonDecode(jsonResponse));
+  }
+
+  Future<PostFavResponse> allFavPost([int index = 0]) async {
+    String url = "/fav/?page=$index";
+
+    var jsonResponse = await _client.get(url);
+
+    return PostFavResponse.fromJson(jsonDecode(jsonResponse));
+  }
+
   Future<void> deletePost(int idPost, String userId) async {
     String url = "/post/user/$idPost/user/$userId";
     print(idPost);
     // ignore: unused_local_variable
     var jsonResponse = await _client.deleteP(url);
+  }
+
+  Future<void> postLike(int idPost) async {
+    String url = "/post/like/$idPost";
+
+    var jsonResponse = await _client.post(url, jsonEncode(idPost));
+    return jsonResponse;
+  }
+
+  Future<dynamic> sendComment(String message, int idPost) async {
+    String url = "/post/commentary/$idPost";
+
+    var jsonResponse =
+        await _client.post(url, jsonEncode({'message': message}));
+    return jsonResponse;
   }
 }

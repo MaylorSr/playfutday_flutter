@@ -37,6 +37,7 @@ import '../models/login.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/register.dart';
+import '../models/user.dart';
 
 @Order(-1)
 @singleton
@@ -53,7 +54,7 @@ class AuthenticationRepository {
 
     var jsonResponse = await _client.post(
         url, LoginRequest(username: username, password: password));
-    return LoginResponse.fromJson(jsonDecode(jsonResponse));
+    return User.fromJson(jsonDecode(jsonResponse));
   }
 
   Future<http.Response> singUp(String username, String email, String phone,

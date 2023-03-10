@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:playfutday_flutter/blocs/profile/profile_bloc.dart';
 import 'package:playfutday_flutter/blocs/profile/profile_state.dart';
 import 'package:playfutday_flutter/pages/profile/profile.dart';
+import 'package:playfutday_flutter/services/post_service/post_service.dart';
 
 import '../../models/user.dart';
 
@@ -48,6 +49,7 @@ class _ProfileState extends State<Profile> {
             }
             return ProfileUser(
               user: state.user!,
+              postService: PostService(),
             );
 
           case ProfileStatus.initial:
