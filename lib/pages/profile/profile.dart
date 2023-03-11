@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, unnecessary_brace_in_string_interps, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers
+// ignore_for_file: prefer_const_constructors, unnecessary_brace_in_string_interps, prefer_const_literals_to_create_immutables, avoid_unnecessary_containers, unnecessary_string_interpolations
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,7 +12,8 @@ import '../../blocs/authentication/authentication_bloc.dart';
 import '../../blocs/authentication/authentication_event.dart';
 import '../../blocs/favPost/fav_Post_event.dart';
 import '../../blocs/favPost/fav_post_bloc.dart';
-import '../allPost/all_Post_Page.dart';
+import '../../blocs/profile/profile_bloc.dart';
+import '../../blocs/profile/profile_event.dart';
 import '../myPost/post_page.dart';
 
 class ProfileUser extends StatefulWidget {
@@ -217,14 +218,6 @@ class _ProfileUserState extends State<ProfileUser> {
                     height: 25,
                     child: ElevatedButton(
                       onPressed: () {
-                        /*
-                        // Navegar a la pantalla de edición de perfil
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {},
-                          ),
-                        );*/
                       },
                       style: ButtonStyle(
                         backgroundColor:

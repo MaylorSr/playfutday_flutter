@@ -19,6 +19,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       _onProfileFetched,
       transformer: throttleDroppable(throttleDuration),
     );
+    on<EditProfile>(
+      _onEditProfilePressed,
+      transformer: throttleDroppable(throttleDuration),
+    );
   }
 
   // ignore: unused_field
@@ -38,6 +42,20 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       final user = await _userService.getMeInfo();
 
       emitter(state.copyWith(
+        status: ProfileStatus.success,
+        user: user,
+      ));
+    } catch (_) {
+      emitter(state.copyWith(status: ProfileStatus.failure));
+    }
+  }
+
+  Future<void> _onEditProfilePressed(
+      EditProfile event, Emitter<ProfileState> emitter) async {
+    try {
+      // Lógica para actualizar la información del usuario aquí
+      final user = await _userService.getMeInfo();
+      return emitter(state.copyWith(
         status: ProfileStatus.success,
         user: user,
       ));

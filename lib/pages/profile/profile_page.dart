@@ -44,7 +44,7 @@ class _ProfileState extends State<Profile> {
               ),
             );
           case ProfileStatus.success:
-            if (state.status.toString().isEmpty) {
+            if (state.status == ProfileStatus.success) {
               return const Center(child: Text('No exists info of that user'));
             }
             return ProfileUser(
@@ -55,7 +55,34 @@ class _ProfileState extends State<Profile> {
           case ProfileStatus.initial:
             return const Center(child: CircularProgressIndicator());
           case ProfileStatus.editProfile:
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.person_2_rounded, size: 50),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      labelText: 'Name',
+                    ),
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                    ),
+                  ),
+                  SizedBox(
+                    height: 25,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Guardar los cambios del perfil
+                      },
+                      child: Text('Save Changes'),
+                    ),
+                  ),
+                ],
+              ),
+            );
         }
       },
     );
