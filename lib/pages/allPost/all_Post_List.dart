@@ -51,7 +51,7 @@ class _AllPostListItemState extends State<AllPostListItem> {
               children: [
                 ClipOval(
                   child: Container(
-                    margin: EdgeInsetsDirectional.symmetric(horizontal: 8),
+                    margin: EdgeInsetsDirectional.symmetric(horizontal: 8, vertical: 10),
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(

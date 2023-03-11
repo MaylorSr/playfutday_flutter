@@ -82,29 +82,23 @@ class MyPostBloc extends Bloc<AllPostEvent, AllPostState> {
   }
 
   Future<void> sendCommentarie(String message, int idPost) async {
-    final sendCommentarieInProgress = state.allPost.map((post) {
-      // ignore: unrelated_type_equality_checks
-      return post.id == idPost ? state.copyWith() : post;
-    }).toList();
+    final updatedPosts = await _postService.sendCommentaries(message, idPost);
 
-    print(sendCommentarieInProgress);
-    // ignore: invalid_use_of_visible_for_testing_member
-    /*emit(AllPostState.success(deleteInProgress));*/
+    // ignore: avoid_print
+    print(updatedPosts);
+    if (updatedPosts == null) {
+      throw Exception('No se pudo actualizar el post con ID $idPost');
+    }
+
+    final updatedPostIndex =
+        state.allPost.indexWhere((post) => post.id == idPost);
+    final updatedAllPost = List<Post>.from(state.allPost);
+    updatedAllPost[updatedPostIndex] = updatedPosts;
+
     // ignore: invalid_use_of_visible_for_testing_member
     emit(state.copyWith(
-        status: AllPostStatus.success,
-        allPost: state.allPost,
-        hasReachedMax: false));
-
-    unawaited(
-      _postService.sendCommentaries(message, idPost).then((_) {
-        final sendCommentariesSuccess = List.of(state.allPost)
-          // ignore: unrelated_type_equality_checks
-          ..removeWhere((post) => post.id == idPost);
-        // ignore: invalid_use_of_visible_for_testing_member
-        emit(state.copyWith(allPost: sendCommentariesSuccess));
-      }),
-    );
+      allPost: updatedAllPost,
+    ));
   }
 
   Future<void> sendLiked(int id) async {
