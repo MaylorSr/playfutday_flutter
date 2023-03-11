@@ -99,22 +99,21 @@ class AllPostBloc extends Bloc<AllPostEvent, AllPostState> {
   }
 
   Future<void> sendCommentarie(String message, int idPost) async {
-    // Actualiza el estado para mostrar que se está enviando el comentario
-    // ignore: invalid_use_of_visible_for_testing_member
-    emit(state.copyWith(status: AllPostStatus.initial));
+    final updatedPosts = await _postService.sendCommentaries(message, idPost);
 
-    // Envía el comentario
-    await _postService.sendCommentaries(message, idPost);
+    print(updatedPosts);
+    if (updatedPosts == null) {
+      throw Exception('No se pudo actualizar el post con ID $idPost');
+    }
 
-    // Recupera la lista actualizada del servicio
-    final updatedList = await _postService.getAllPosts();
+    final updatedPostIndex =
+        state.allPost.indexWhere((post) => post.id == idPost);
+    final updatedAllPost = List<Post>.from(state.allPost);
+    updatedAllPost[updatedPostIndex] = updatedPosts;
 
-    // Actualiza el estado con la lista actualizada
     // ignore: invalid_use_of_visible_for_testing_member
     emit(state.copyWith(
-      status: AllPostStatus.success,
-      allPost: updatedList!.content,
-      hasReachedMax: false,
+      allPost: updatedAllPost,
     ));
   }
 }

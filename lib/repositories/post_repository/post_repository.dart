@@ -42,6 +42,7 @@ class PostRepository {
 
   Future<void> deletePost(int idPost, String userId) async {
     String url = "/post/user/$idPost/user/$userId";
+    // ignore: avoid_print
     print(idPost);
     // ignore: unused_local_variable
     var jsonResponse = await _client.deleteP(url);
@@ -57,8 +58,7 @@ class PostRepository {
   Future<Post> sendComment(String message, int idPost) async {
     String url = "/post/commentary/$idPost";
 
-    var jsonResponse =
-        await _client.post(url, jsonEncode({'message': message}));
+    var jsonResponse = await _client.post(url, jsonEncode(message));
     return Post.fromJson(jsonDecode(jsonResponse));
   }
 }

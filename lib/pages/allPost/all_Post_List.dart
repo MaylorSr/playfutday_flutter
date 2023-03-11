@@ -1,4 +1,3 @@
-// ignore_for_file: prefer_const_constructors, no_leading_underscores_for_local_identifiers, library_private_types_in_public_api, non_constant_identifier_names, unnecessary_overrides
 
 import 'package:flutter/material.dart';
 import 'package:playfutday_flutter/models/models.dart';
@@ -200,25 +199,30 @@ class _AllPostListItemState extends State<AllPostListItem> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => CommentDialog(
-                                // ignore: avoid_types_as_parameter_names
-                                post: widget.post, postService: PostService(),
-                                onSendCommentariePressed: (String, int) {},
+                                post: widget.post,
+                                postService: PostService(),
+                                onSendCommentariePressed:
+                                    widget.onSendCommentariePressed,
                               ),
                               fullscreenDialog: true,
                             ),
                           );
                         },
-                        child: Icon(
-                          Icons.chat_bubble_outline,
-                          size: 28,
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        '${widget.post.commentaries == null ? '' : widget.post.commentaries!.length} ',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.chat_bubble_outline,
+                              size: 28,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              '${widget.post.commentaries == null ? '0' : widget.post.commentaries!.length.toString()}',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -242,11 +246,12 @@ class CommentDialog extends StatefulWidget {
   final PostService postService;
   final void Function(String, int) onSendCommentariePressed;
 
-  // ignore: use_key_in_widget_constructors
-  const CommentDialog(
-      {required this.post,
-      required this.postService,
-      required this.onSendCommentariePressed});
+  const CommentDialog({
+    Key? key,
+    required this.post,
+    required this.postService,
+    required this.onSendCommentariePressed,
+  }) : super(key: key);
 
   @override
   _CommentDialogState createState() => _CommentDialogState();
@@ -254,112 +259,131 @@ class CommentDialog extends StatefulWidget {
 
 class _CommentDialogState extends State<CommentDialog> {
   final TextEditingController _commentController = TextEditingController();
-  final postService = PostService();
-  @override
-  CommentDialog get widget => super.widget;
+  bool _isCommentEmpty = true;
+
+  void _addComment(String message, int idPost) {
+    widget.onSendCommentariePressed(message, idPost);
+  }
+
+  void _onCommentChanged(String value) {
+    setState(() {
+      _isCommentEmpty = value.isEmpty;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    var urlBase = "http://localhost:8080/download/";
-
-    return Stack(
-      children: [
-        Hero(
-          tag:
-              'image${widget.post.id}', // un identificador único para cada imagen
-          child: Container(
-            width: double.infinity, // ocupa todo el ancho disponible
-            height: 400, // altura fija para mantener la proporción de la imagen
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(
-                    // ignore: unnecessary_brace_in_string_interps
-                    '${urlBase}${widget.post.image}'), // la URL de la imagen
-                fit: BoxFit.contain,
-                onError: (exception, stackTrace) {
-                  Image.network(
-                      'https://cdn-icons-png.flaticon.com/512/1179/1179237.png');
-                }, // rellena el contenedor sin deformar la imagen
-              ),
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        title: Text(
+          'Comments',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.black,
+      ),
+      body: Column(
+        children: [
+          Divider(
+            color: Colors.white,
+            thickness: 1,
+          ),
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.all(20),
+              itemCount: widget.post.commentaries?.length ?? 0,
+              itemBuilder: (context, index) {
+                final commentary = widget.post.commentaries![index];
+                return ListTile(
+                  leading: CircleAvatar(
+                    child: Text(
+                      '${commentary.authorName?[0]}',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  title: Text(
+                    commentary.message!,
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        commentary.authorName ?? '',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        commentary.uploadCommentary.toString(),
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
           ),
-        ),
-        Dialog(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Comentaries',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text('${widget.post.author}'),
-              ),
-              Divider(),
-              if (widget.post.commentaries != null &&
-                  widget.post.commentaries!.isNotEmpty)
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: widget.post.commentaries!.length,
-                    itemBuilder: (context, index) {
-                      final comment = widget.post.commentaries![index];
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Card(
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              child: Text('${comment.authorName?[0]}'),
-                            ),
-                            title: Text('${comment.message}'),
-                            subtitle: Text('${comment.uploadCommentary}'),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              Divider(),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  controller: _commentController,
-                  decoration: InputDecoration(
-                    hintText: 'Write your commentarie',
-                  ),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('Back'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      widget.onSendCommentariePressed(_commentController.text,
-                          int.parse('${widget.post.id}'));
-                      _commentController.clear();
-                    },
-                    child: Text('Send'),
-                  ),
-                ],
-              ),
-            ],
+          Divider(
+            color: Colors.white,
+            thickness: 1,
           ),
-        ),
-      ],
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _commentController,
+                    decoration: InputDecoration(
+                      hintText: 'Add a comment',
+                      hintStyle: TextStyle(
+                        color: Colors.white,
+                      ),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                          width: 1,
+                        ),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                    onChanged: _onCommentChanged,
+                  ),
+                ),
+                SizedBox(width: 8),
+                ElevatedButton(
+                  onPressed: _isCommentEmpty
+                      ? null
+                      : () {
+                          Navigator.of(context).pop();
+                          _addComment(_commentController.text,
+                              int.parse('${widget.post.id}'));
+                          _commentController.clear();
+                        },
+                  child: Text('Post'),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
