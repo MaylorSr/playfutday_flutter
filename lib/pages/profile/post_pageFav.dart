@@ -40,7 +40,11 @@ class _PostListFavState extends State<PostListFav> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 // ignore: prefer_const_literals_to_create_immutables
                 children: [
-                  const Icon(Icons.sports_soccer, size: 50, color: Colors.white,),
+                  const Icon(
+                    Icons.sports_soccer,
+                    size: 50,
+                    color: Colors.white,
+                  ),
                   const SizedBox(height: 20),
                   const Text('Any favorite posts',
                       style: TextStyle(color: Colors.white, fontSize: 20))
@@ -75,7 +79,11 @@ class _PostListFavState extends State<PostListFav> {
                         user: widget.user,
                         onDeletePressed: (userId, id) {
                           context.read<FavBloc>().deletePost(userId, id);
-                        });
+                        },
+                        onSendLikedPressed: (id) {
+                          context.read<FavBloc>().sendLiked(id);
+                        },
+                      );
               },
               scrollDirection: Axis.vertical,
               itemCount: state.hasReachedMax

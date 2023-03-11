@@ -51,13 +51,17 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       bottomNavigationBar: CurvedNavigationBar(
         index: _selectedIndex,
-        backgroundColor: Color.fromARGB(255, 3, 25, 151),
-        color: Colors.white,
-        buttonBackgroundColor: Color.fromARGB(255, 255, 255, 255),
+        backgroundColor: Colors.grey,
+        color: Colors.black,
+        buttonBackgroundColor: Colors.black,
         height: 50,
         items: [
-          Icon(Icons.home, size: 20),
-          Icon(Icons.person, size: 20),
+          Icon(Icons.home, size: 20, color: Colors.white),
+          Icon(
+            Icons.person,
+            size: 20,
+            color: Colors.white,
+          ),
         ],
         onTap: (index) {
           setState(() {
@@ -73,11 +77,12 @@ class _HomePageState extends State<HomePage> {
           switch (snapshot.data) {
             case 0:
               return Scaffold(
+                  backgroundColor: Colors.black,
                   appBar: AppBar(
-                    backgroundColor: Colors.white,
+                    backgroundColor: Colors.black,
                     title: Text('PlayFutDay',
                         style: TextStyle(
-                            color: Colors.black,
+                            color: Colors.white,
                             fontStyle: FontStyle.italic,
                             fontSize: 18,
                             fontWeight: FontWeight.w600)),

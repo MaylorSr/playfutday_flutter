@@ -61,4 +61,11 @@ class PostRepository {
     var jsonResponse = await _client.post(url, jsonEncode(message));
     return Post.fromJson(jsonDecode(jsonResponse));
   }
+
+  Future<MyFavPost> postLikeFav(int idPost) async {
+    String url = "/post/like/$idPost";
+
+    var jsonResponse = await _client.post(url, jsonEncode(idPost));
+    return MyFavPost.fromJson(jsonDecode(jsonResponse));
+  }
 }

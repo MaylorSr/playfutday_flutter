@@ -1,3 +1,4 @@
+// ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
 import 'package:playfutday_flutter/models/models.dart';
@@ -43,6 +44,7 @@ class _AllPostListItemState extends State<AllPostListItem> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Card(
+        color: Colors.black,
         margin: EdgeInsets.symmetric(vertical: 20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,7 +53,8 @@ class _AllPostListItemState extends State<AllPostListItem> {
               children: [
                 ClipOval(
                   child: Container(
-                    margin: EdgeInsetsDirectional.symmetric(horizontal: 8, vertical: 10),
+                    margin: EdgeInsetsDirectional.symmetric(
+                        horizontal: 8, vertical: 10),
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
@@ -74,8 +77,7 @@ class _AllPostListItemState extends State<AllPostListItem> {
                     '${widget.post.author}',
                     // ignore: prefer_const_constructors
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                        fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ),
                 Visibility(
@@ -84,12 +86,13 @@ class _AllPostListItemState extends State<AllPostListItem> {
                   child: Row(
                     children: [
                       IconButton(
-                        icon: Icon(Icons.delete),
+                        icon: Icon(Icons.delete, color: Colors.red),
                         onPressed: () {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
+                                // ignore: prefer_const_constructors
                                 title: Text(
                                   "WARNING!",
                                   // ignore: prefer_const_constructors
@@ -158,23 +161,26 @@ class _AllPostListItemState extends State<AllPostListItem> {
                 children: [
                   Row(
                     children: [
+                      // ignore: prefer_const_constructors
                       SizedBox(
                         height: 8,
                         width: 8,
                       ),
                       Text(
                         '${widget.post.tag}',
+                        // ignore: prefer_const_constructors
                         style: TextStyle(
                             fontSize: 16,
                             fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.w400),
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white),
                       ),
                       Row(
                         children: [
                           IconButton(
                             icon: Icon(
                               _isLiked ? Icons.favorite : Icons.favorite_border,
-                              color: _isLiked ? Colors.red : null,
+                              color: _isLiked ? Colors.red : Colors.white,
                             ),
                             onPressed: () {
                               setState(() {
@@ -189,7 +195,13 @@ class _AllPostListItemState extends State<AllPostListItem> {
                                   int.parse('${widget.post.id}'));
                             },
                           ),
-                          Text('$_likesCount'),
+                          Text(
+                            '$_likesCount',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16),
+                          ),
                         ],
                       ),
                       SizedBox(width: 16),
@@ -211,16 +223,17 @@ class _AllPostListItemState extends State<AllPostListItem> {
                         child: Row(
                           children: [
                             Icon(
+                              color: Colors.white,
                               Icons.chat_bubble_outline,
-                              size: 28,
+                              size: 25,
                             ),
                             SizedBox(width: 8),
                             Text(
                               '${widget.post.commentaries == null ? '0' : widget.post.commentaries!.length.toString()}',
                               style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white),
                             ),
                           ],
                         ),
@@ -232,7 +245,13 @@ class _AllPostListItemState extends State<AllPostListItem> {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: Text('${widget.post.uploadDate}'),
+              child: Text(
+                '${widget.post.uploadDate}',
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white),
+              ),
             )
           ],
         ),

@@ -91,6 +91,16 @@ class PostService {
     return null;
   }
 
+  Future<MyFavPost?> postLikeByMeFav(int idPost) async {
+    String? token = _localStorageService.getFromDisk('user_token');
+    if (token != null) {
+      MyFavPost p = await _postRepository.postLikeFav(idPost);
+      print(p);
+      return p;
+    }
+    return null;
+  }
+
   Future<Post?> sendCommentaries(String message, int idPost) async {
     String? token = _localStorageService.getFromDisk('user_token');
 

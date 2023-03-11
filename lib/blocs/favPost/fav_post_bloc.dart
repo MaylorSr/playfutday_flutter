@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:playfutday_flutter/models/favPost.dart';
 import 'package:playfutday_flutter/services/post_service/post_service.dart';
 import 'package:stream_transform/stream_transform.dart';
 
@@ -78,5 +79,23 @@ class FavBloc extends Bloc<FavEvent, FavState> {
         emit(state.copyWith(favPosts: deleteSuccess));
       }),
     );
+  }
+
+  Future<void> sendLiked(int id) async {
+    final updatedPosts = await postService.postLikeByMeFav(id);
+
+    print(updatedPosts);
+    if (updatedPosts == null) {
+      throw Exception('No se pudo actualizar el post con ID $id');
+    }
+
+    final updatedPostIndex = state.favPosts.indexWhere((post) => post.id == id);
+    final updatedAllPost = List<MyFavPost>.from(state.favPosts);
+    updatedAllPost[updatedPostIndex] = updatedPosts;
+
+    // ignore: invalid_use_of_visible_for_testing_member
+    emit(state.copyWith(
+      favPosts: updatedAllPost,
+    ));
   }
 }
