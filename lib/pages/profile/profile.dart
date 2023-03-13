@@ -6,23 +6,23 @@ import 'package:playfutday_flutter/blocs/myPost/myPost_bloc.dart';
 import 'package:playfutday_flutter/models/models.dart';
 import 'package:playfutday_flutter/pages/profile/post_pageFav.dart';
 import 'package:playfutday_flutter/services/post_service/post_service.dart';
+import 'package:playfutday_flutter/services/user_service/user_service.dart';
 
 import '../../blocs/allPost/allPost_event.dart';
 import '../../blocs/authentication/authentication_bloc.dart';
 import '../../blocs/authentication/authentication_event.dart';
 import '../../blocs/favPost/fav_Post_event.dart';
 import '../../blocs/favPost/fav_post_bloc.dart';
-import '../../blocs/profile/profile_bloc.dart';
-import '../../blocs/profile/profile_event.dart';
+
+import '../editProfile/edit_profile.dart';
 import '../myPost/post_page.dart';
 
 class ProfileUser extends StatefulWidget {
   const ProfileUser({
-    super.key,
+    Key? key,
     required this.user,
     required this.postService,
-  });
-
+  }) : super(key: key);
   final User user;
   final PostService postService;
 
@@ -78,6 +78,26 @@ class _ProfileUserState extends State<ProfileUser> {
   @override
   Widget build(BuildContext context) {
     final authBloc = BlocProvider.of<AuthenticationBloc>(context);
+
+    // ignore: unused_element, no_leading_underscores_for_local_identifiers
+    void _editProfile() async {
+      final updatedUser = await Navigator.push<User>(
+        context,
+        MaterialPageRoute(
+          builder: (_) => EditProfile(
+            user: widget.user,
+            userService: UserService(),
+          ),
+        ),
+      );
+      if (updatedUser != null) {
+        setState(() {
+          widget.user.phone = updatedUser.phone;
+          widget.user.biography = updatedUser.biography;
+          // update other fields as necessary
+        });
+      }
+    }
 
     return Column(
       children: [
@@ -217,8 +237,7 @@ class _ProfileUserState extends State<ProfileUser> {
                   child: SizedBox(
                     height: 25,
                     child: ElevatedButton(
-                      onPressed: () {
-                      },
+                      onPressed: _editProfile,
                       style: ButtonStyle(
                         backgroundColor:
                             MaterialStateProperty.all<Color>(Colors.grey),

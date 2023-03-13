@@ -7,6 +7,7 @@ import '../localstorage_service.dart';
 
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
+import 'package:http/http.dart' as http;
 
 @Order(3)
 @singleton
@@ -36,7 +37,36 @@ class UserService {
     }
     return null;
   }
+  
+  Future<dynamic> editBio(String biography) async {
+    String? token = _localStorageService.getFromDisk("user_token");
+    if (token != null) {
+      await _userRepository.editBioByMe(biography);
+      // ignore: avoid_print
+    }
+  }
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+
+
+  Future<http.Response?> editPhone(String phone) async {
+    String? token = _localStorageService.getFromDisk("user_token");
+    if (token != null) {
+      var response = await _userRepository.editPhoneByMe(phone);
+      // ignore: avoid_print
+      return response;
+    }
+    return null;
+  }
+
+  
+  Future<dynamic> editBirthday(String birthday) async {
+    String? token = _localStorageService.getFromDisk("user_token");
+    if (token != null) {
+      await _userRepository.editBirthdayByMe(birthday);
+      // ignore: avoid_print
+    }
+  }
+
 }

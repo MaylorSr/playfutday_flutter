@@ -54,35 +54,6 @@ class _ProfileState extends State<Profile> {
 
           case ProfileStatus.initial:
             return const Center(child: CircularProgressIndicator());
-          case ProfileStatus.editProfile:
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.person_2_rounded, size: 50),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Name',
-                    ),
-                  ),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                    ),
-                  ),
-                  SizedBox(
-                    height: 25,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Guardar los cambios del perfil
-                      },
-                      child: Text('Save Changes'),
-                    ),
-                  ),
-                ],
-              ),
-            );
         }
       },
     );

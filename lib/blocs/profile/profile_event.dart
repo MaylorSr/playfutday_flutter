@@ -7,4 +7,4 @@ abstract class ProfileEvent extends Equatable {
 
 class ProfileFetched extends ProfileEvent {}
 
-class EditProfile extends ProfileEvent {}
+
